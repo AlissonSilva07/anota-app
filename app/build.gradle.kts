@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.com.google.dagger.hilt.android.gradle.plugin)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.material.icons.extended)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
