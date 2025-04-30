@@ -23,7 +23,7 @@ private val darkScheme = darkColorScheme(
     primary = bg,
     secondary = secondary,
     surface = primary,
-    outline = stroke,
+    outline = strokeDark,
     scrim = primary
 )
 

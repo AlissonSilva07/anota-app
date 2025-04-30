@@ -7,6 +7,7 @@ import androidx.navigation.navigation
 import edu.alisson.anota.presentation.navigation.MainScaffold
 import edu.alisson.anota.presentation.navigation.Screen
 import edu.alisson.anota.presentation.ui.home.HomeScreen
+import edu.alisson.anota.presentation.ui.profile.ProfileScreen
 import edu.alisson.anota.presentation.ui.search.SearchScreen
 
 fun NavGraphBuilder.mainGraph(navController: NavHostController) {
@@ -19,11 +20,19 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             }
         }
 
-        composable(Screen.Search.route) {
+        composable(Screen.Procurar.route) {
             MainScaffold(
                 navController = navController
             ) {
                 SearchScreen()
+            }
+        }
+
+        composable(Screen.Perfil.route) {
+            MainScaffold(
+                navController = navController
+            ) {
+                ProfileScreen()
             }
         }
     }

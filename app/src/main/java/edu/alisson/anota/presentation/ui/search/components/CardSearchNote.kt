@@ -58,7 +58,7 @@ fun CardSearchItem(
                 Icon(
                     imageVector = Icons.Outlined.ModeEdit,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
+                    tint = MaterialTheme.colorScheme.surface,
                     modifier = modifier.size(24.dp)
                 )
             }

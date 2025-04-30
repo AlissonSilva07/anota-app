@@ -57,7 +57,7 @@ fun CardLastNote(
                 Icon(
                     imageVector = Icons.Outlined.ModeEdit,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
+                    tint = MaterialTheme.colorScheme.surface,
                     modifier = modifier.size(48.dp)
                 )
             }
