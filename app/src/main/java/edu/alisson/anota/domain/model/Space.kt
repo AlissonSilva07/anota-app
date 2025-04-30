@@ -7,5 +7,5 @@ data class Space(
     val title: String,
     val description: String,
     val color: Color,
-    val noteLength: Int
+    val notes: List<Note>? = null
 )

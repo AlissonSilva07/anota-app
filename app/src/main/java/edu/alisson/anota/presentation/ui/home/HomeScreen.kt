@@ -46,14 +46,12 @@ fun HomeScreen() {
             title = "Space 1",
             color = Color(0xFFFF7676),
             description = "New space",
-            noteLength = 2
         ),
         Space(
             id = "2",
             title = "Space 2",
             color = Color(0xFF29B21C),
             description = "New space",
-            noteLength = 1
         )
     )
 

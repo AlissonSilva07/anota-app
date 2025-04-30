@@ -48,7 +48,7 @@ fun SpaceItem(
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                text = "(${space.noteLength})",
+                text = "(${space.notes?.size ?: 0})",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.secondary
 

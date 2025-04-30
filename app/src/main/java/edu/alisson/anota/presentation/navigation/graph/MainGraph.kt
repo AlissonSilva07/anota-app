@@ -7,6 +7,7 @@ import androidx.navigation.navigation
 import edu.alisson.anota.presentation.navigation.MainScaffold
 import edu.alisson.anota.presentation.navigation.Screen
 import edu.alisson.anota.presentation.ui.home.HomeScreen
+import edu.alisson.anota.presentation.ui.search.SearchScreen
 
 fun NavGraphBuilder.mainGraph(navController: NavHostController) {
     navigation(startDestination = Screen.Home.route, route = "main") {
@@ -15,6 +16,14 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 navController = navController
             ) {
                 HomeScreen()
+            }
+        }
+
+        composable(Screen.Search.route) {
+            MainScaffold(
+                navController = navController
+            ) {
+                SearchScreen()
             }
         }
     }
