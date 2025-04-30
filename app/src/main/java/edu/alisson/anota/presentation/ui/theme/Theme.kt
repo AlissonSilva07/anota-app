@@ -1,5 +1,6 @@
 package edu.alisson.anota.presentation.ui.theme
 import android.os.Build
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -14,14 +15,16 @@ private val lightScheme = lightColorScheme(
     primary = primary,
     secondary = secondary,
     surface = bg,
-    outline = stroke
+    outline = stroke,
+    scrim = bg
 )
 
 private val darkScheme = darkColorScheme(
     primary = bg,
     secondary = secondary,
     surface = primary,
-    outline = stroke
+    outline = stroke,
+    scrim = primary
 )
 
 @Immutable
@@ -38,7 +41,7 @@ val unspecified_scheme = ColorFamily(
 
 @Composable
 fun AnotaTheme(
-    darkTheme: Boolean = false,
+    darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable() () -> Unit
