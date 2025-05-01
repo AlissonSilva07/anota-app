@@ -57,7 +57,9 @@ fun MainScaffold(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.surface,
                     shape = RoundedCornerShape(8.dp),
-                    onClick = {}
+                    onClick = {
+                        navController.navigate(Screen.Create.route)
+                    }
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),

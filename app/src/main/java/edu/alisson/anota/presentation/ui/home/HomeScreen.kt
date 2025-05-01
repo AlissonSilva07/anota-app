@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_6
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import edu.alisson.anota.data.Mocks.spaces
 import edu.alisson.anota.domain.model.Space
 import edu.alisson.anota.presentation.ui.home.components.CardLastNote
 import edu.alisson.anota.presentation.ui.home.components.HomeHeader
@@ -40,20 +41,6 @@ import edu.alisson.anota.presentation.ui.theme.AnotaTheme
 
 @Composable
 fun HomeScreen() {
-    val spaces = listOf(
-        Space(
-            id = "1",
-            title = "Space 1",
-            color = Color(0xFFFF7676),
-            description = "New space",
-        ),
-        Space(
-            id = "2",
-            title = "Space 2",
-            color = Color(0xFF29B21C),
-            description = "New space",
-        )
-    )
 
     Column(
         modifier = Modifier
