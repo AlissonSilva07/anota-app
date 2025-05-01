@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "12540609580",
+    "firebase_url": "https://my-notes-app-9805-default-rtdb.firebaseio.com",
+    "project_id": "my-notes-app-9805",
+    "storage_bucket": "my-notes-app-9805.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12540609580:android:18ddeafee9b28fcb97fd89",
+        "android_client_info": {
+          "package_name": "br.com.alissonrego.notes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7CF572-IFLTPgkn88PLFgwT0Cfzdz4R4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12540609580:android:51466771a891eb9297fd89",
+        "android_client_info": {
+          "package_name": "edu.alisson.anota"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7CF572-IFLTPgkn88PLFgwT0Cfzdz4R4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

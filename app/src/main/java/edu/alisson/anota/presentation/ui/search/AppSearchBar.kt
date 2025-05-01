@@ -94,9 +94,16 @@ fun AppSearchBar(
                     }
                     item { Spacer(modifier = Modifier.height(8.dp)) }
                 }
-            } else {
+            } else if (searchQuery.isNotEmpty() && searchResults.isEmpty()) {
                 Text(
                     text = "Nenhum resultado encontrado.",
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            } else {
+                Text(
+                    text = "Faça uma pesquisa para começar.",
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier
                         .padding(16.dp)

@@ -1,5 +1,6 @@
 package edu.alisson.anota.presentation.ui.login
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,16 +17,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import edu.alisson.anota.presentation.components.ButtonVariant
 import edu.alisson.anota.presentation.components.CustomButton
 import edu.alisson.anota.presentation.components.CustomInput
@@ -37,9 +39,20 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     navigateToHome: () -> Unit,
     navigateToSignUp: () -> Unit,
+    loginViewModel: LoginScreenViewModel = hiltViewModel()
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val email by loginViewModel.email.collectAsState()
+    val password by loginViewModel.password.collectAsState()
+
+    LaunchedEffect(Unit) {
+        loginViewModel.eventFlow.collect { event ->
+            when (event) {
+                is UiEvent.ShowToast -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                UiEvent.NavigateToHome -> navigateToHome()
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -72,16 +85,16 @@ fun LoginScreen(
             CustomInput(
                 label = "Email",
                 value = email,
-                onValueChange = {
-                    email = it
+                onValueChange = { newValue ->
+                    loginViewModel.onEmailChange(newValue)
                 },
                 modifier = Modifier.fillMaxWidth()
             )
             CustomInput(
                 label = "Senha",
                 value = password,
-                onValueChange = {
-                    password = it
+                onValueChange = {newValue ->
+                    loginViewModel.onPasswordChange(newValue)
                 },
                 type = TextFieldType.PASSWORD,
                 modifier = Modifier.fillMaxWidth()
@@ -90,7 +103,7 @@ fun LoginScreen(
                 title = "Entrar",
                 variant = ButtonVariant.DEFAULT,
                 disabled = false,
-                onClick = { navigateToHome() },
+                onClick = { loginViewModel.login() },
                 modifier = Modifier.fillMaxWidth()
             )
             TextButton(

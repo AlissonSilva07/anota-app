@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="edu.alisson.anota" />
+                  <option name="mobileSdkAppId" value="1:12540609580:android:51466771a891eb9297fd89" />
+                  <option name="projectId" value="my-notes-app-9805" />
+                  <option name="projectNumber" value="12540609580" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
