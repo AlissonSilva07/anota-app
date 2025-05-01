@@ -20,6 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -44,6 +47,8 @@ fun LoginScreen(
     val context = LocalContext.current
     val email by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
+    val emailError by loginViewModel.emailError.collectAsState()
+    val passwordError by loginViewModel.passwordError.collectAsState()
 
     LaunchedEffect(Unit) {
         loginViewModel.eventFlow.collect { event ->
@@ -88,6 +93,7 @@ fun LoginScreen(
                 onValueChange = { newValue ->
                     loginViewModel.onEmailChange(newValue)
                 },
+                error = emailError,
                 modifier = Modifier.fillMaxWidth()
             )
             CustomInput(
@@ -96,6 +102,7 @@ fun LoginScreen(
                 onValueChange = {newValue ->
                     loginViewModel.onPasswordChange(newValue)
                 },
+                error = passwordError,
                 type = TextFieldType.PASSWORD,
                 modifier = Modifier.fillMaxWidth()
             )

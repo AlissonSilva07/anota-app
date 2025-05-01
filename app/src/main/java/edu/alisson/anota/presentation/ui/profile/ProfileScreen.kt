@@ -16,71 +16,90 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import edu.alisson.anota.presentation.components.ButtonVariant
 import edu.alisson.anota.presentation.components.CustomButton
 import edu.alisson.anota.presentation.ui.theme.AnotaTheme
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier) {
+fun ProfileScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    profileScreenViewModel: ProfileScreenViewModel = hiltViewModel()
+) {
+    val userData by profileScreenViewModel.userData.collectAsState()
+
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column (
+        Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Card(
-                modifier = modifier
-                    .size(80.dp),
-                shape = RoundedCornerShape(percent = 100),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
+            userData?.let { user ->
+                Card(
+                    modifier = Modifier
+                        .size(80.dp),
+                    shape = RoundedCornerShape(percent = 100),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Person,
+                            contentDescription = "Notifications",
+                            tint = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
+                }
                 Column(
-                    modifier = modifier
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Person,
-                        contentDescription = "Notifications",
-                        tint = MaterialTheme.colorScheme.surface,
-                        modifier = modifier.size(40.dp)
+                    Text(
+                        text = user.name,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = user.email,
+                        style = MaterialTheme.typography.bodySmall,
                     )
                 }
-            }
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "John Doe",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Ativo(a) desde 20/08/2025",
-                    style = MaterialTheme.typography.bodySmall,
-                )
             }
         }
         CustomButton(
             title = "Sair",
             variant = ButtonVariant.DEFAULT,
             disabled = false,
-            onClick = { /*TODO*/ },
+            onClick = {
+                profileScreenViewModel.logout()
+                navController.navigate("auth") {
+                    popUpTo(0) { inclusive = true } // clears the whole backstack
+                    launchSingleTop = true
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -90,6 +109,8 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun ProfileScreenPrev() {
     AnotaTheme {
-        ProfileScreen()
+        ProfileScreen(
+            navController = NavController(LocalContext.current)
+        )
     }
 }

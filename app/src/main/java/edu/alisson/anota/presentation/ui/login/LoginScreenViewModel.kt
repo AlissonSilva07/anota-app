@@ -24,6 +24,12 @@ class LoginScreenViewModel @Inject constructor(
     private val _password = MutableStateFlow("")
     val password = _password.asStateFlow()
 
+    private val _emailError = MutableStateFlow<String?>(null)
+    val emailError = _emailError.asStateFlow()
+
+    private val _passwordError = MutableStateFlow<String?>(null)
+    val passwordError = _passwordError.asStateFlow()
+
     private val _authState = MutableStateFlow<Resource<FirebaseUser?>>(Resource.Success(null))
     val authState = _authState.asStateFlow()
 
@@ -42,15 +48,22 @@ class LoginScreenViewModel @Inject constructor(
         val email = _email.value.trim()
         val password = _password.value
 
+        _emailError.value = null
+        _passwordError.value = null
+
+        var hasError = false
+
         if (email.isBlank()) {
-            _eventFlow.emit(UiEvent.ShowToast("E-mail não pode estar vazio."))
-            return@launch
+            _emailError.value = "E-mail não pode estar vazio."
+            hasError = true
         }
 
         if (password.length < 6) {
-            _eventFlow.emit(UiEvent.ShowToast("Senha deve ter pelo menos 6 caracteres."))
-            return@launch
+            _passwordError.value = "Senha deve ter pelo menos 6 caracteres."
+            hasError = true
         }
+
+        if (hasError) return@launch
 
         _authState.value = Resource.Loading()
         val result = authRepository.login(email, password)
