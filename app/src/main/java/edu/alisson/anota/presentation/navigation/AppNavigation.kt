@@ -3,6 +3,7 @@ package edu.alisson.anota.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import edu.alisson.anota.presentation.navigation.graph.authGraph
 import edu.alisson.anota.presentation.navigation.graph.mainGraph
 
 @Composable
@@ -11,8 +12,9 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = "main"
+        startDestination = "auth"
     ) {
+        authGraph(navController)
         mainGraph(navController)
     }
 }
