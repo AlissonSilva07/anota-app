@@ -36,7 +36,7 @@ fun BottomNavBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination
 
-    val navItems = listOf(BottomNavItem.Home, BottomNavItem.Search, BottomNavItem.Profile)
+    val navItems = listOf(BottomNavItem.Home, BottomNavItem.Spaces, BottomNavItem.Search, BottomNavItem.Profile)
 
     Row(
         modifier = Modifier
@@ -85,12 +85,12 @@ fun RowScope.AddItem(
         Icon(
             imageVector = if (selected) screen.selectedIcon else screen.icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
+            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = screen.title,
-            color = MaterialTheme.colorScheme.primary,
+            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
             fontSize = 10.sp,
             fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.Normal
         )

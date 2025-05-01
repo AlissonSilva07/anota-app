@@ -1,4 +1,4 @@
-package edu.alisson.anota.presentation.ui.home.components
+package edu.alisson.anota.presentation.ui.space.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.ModeEdit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,12 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import edu.alisson.anota.domain.model.Space
+import edu.alisson.anota.domain.model.Note
 
 @Composable
-fun SpaceItem(
+fun SpaceNoteItem(
     modifier: Modifier = Modifier,
-    space: Space,
+    note: Note,
     onItemClick: () -> Unit
 ) {
     Row(
@@ -33,7 +34,7 @@ fun SpaceItem(
             .padding(8.dp)
             .clickable { onItemClick() },
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -41,19 +42,21 @@ fun SpaceItem(
         ) {
             Box(
                 modifier = modifier
-                    .size(16.dp)
-                    .clip(RoundedCornerShape(percent = 100))
-                    .background(space.color)
-            )
+                    .size(24.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(MaterialTheme.colorScheme.primary),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.ModeEdit,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.surface,
+                    modifier = modifier.size(16.dp)
+                )
+            }
             Text(
-                text = space.title,
+                text = note.title,
                 style = MaterialTheme.typography.bodyLarge,
-            )
-            Text(
-                text = "(${space.notes?.size ?: 0})",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.secondary
-
             )
         }
         Icon(

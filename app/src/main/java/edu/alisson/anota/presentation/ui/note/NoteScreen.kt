@@ -1,4 +1,4 @@
-package edu.alisson.anota.presentation.ui.create
+package edu.alisson.anota.presentation.ui.note
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -43,18 +43,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.alisson.anota.data.Mocks.spaces
-import edu.alisson.anota.presentation.ui.create.components.InvisibleTextField
-import edu.alisson.anota.presentation.ui.create.components.InvisibleTextFieldType
+import edu.alisson.anota.presentation.ui.note.components.InvisibleTextField
+import edu.alisson.anota.presentation.ui.note.components.InvisibleTextFieldType
 import edu.alisson.anota.presentation.ui.home.components.SpaceItem
 import edu.alisson.anota.presentation.ui.theme.AnotaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CreateNoteScreen(
+fun NoteScreen(
     modifier: Modifier = Modifier,
+    noteId: String? = null,
     navigateBack: () -> Unit,
 ) {
+    val intent = remember(noteId) {
+        if (noteId == null) NoteIntent.Create else NoteIntent.Edit(noteId)
+    }
+
     val sheetState = rememberModalBottomSheetState()
     var isOpenModal by remember {
         mutableStateOf(false)
@@ -128,7 +133,10 @@ fun CreateNoteScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Space 1",
+                            text = when (intent) {
+                                is NoteIntent.Create -> "Selec. Espaço"
+                                is NoteIntent.Edit -> "Space 1"
+                            },
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.widthIn(
                                 max = 72.dp
@@ -209,7 +217,7 @@ fun CreateNoteScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Escolher Espaço",
+                    text = "Selecionar Espaço",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
@@ -250,7 +258,7 @@ private fun CreateNoteScreenPrev() {
     AnotaTheme(
         dynamicColor = false
     ) {
-        CreateNoteScreen(
+        NoteScreen(
             navigateBack = {}
         )
     }

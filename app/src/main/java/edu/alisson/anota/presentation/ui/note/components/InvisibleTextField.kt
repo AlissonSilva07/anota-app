@@ -1,4 +1,4 @@
-package edu.alisson.anota.presentation.ui.create.components
+package edu.alisson.anota.presentation.ui.note.components
 
 import android.os.Build
 import androidx.annotation.RequiresApi
