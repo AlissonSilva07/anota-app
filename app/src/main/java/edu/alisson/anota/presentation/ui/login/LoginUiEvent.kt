@@ -1,6 +1,6 @@
 package edu.alisson.anota.presentation.ui.login
 
-sealed class UiEvent {
-    data class ShowToast(val message: String) : UiEvent()
-    object NavigateToHome : UiEvent()
+sealed class LoginUiEvent {
+    data class ShowToast(val message: String) : LoginUiEvent()
+    object NavigateToHome : LoginUiEvent()
 }

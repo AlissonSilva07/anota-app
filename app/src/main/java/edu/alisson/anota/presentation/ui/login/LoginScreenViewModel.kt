@@ -41,7 +41,7 @@ class LoginScreenViewModel @Inject constructor(
         _password.value = value
     }
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    private val _eventFlow = MutableSharedFlow<LoginUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
     fun login() = viewModelScope.launch {
@@ -70,9 +70,9 @@ class LoginScreenViewModel @Inject constructor(
         _authState.value = result
 
         if (result is Resource.Error) {
-            _eventFlow.emit(UiEvent.ShowToast(result.message ?: "Erro ao fazer login."))
+            _eventFlow.emit(LoginUiEvent.ShowToast(result.message ?: "Erro ao fazer login."))
         } else if (result is Resource.Success) {
-            _eventFlow.emit(UiEvent.NavigateToHome)
+            _eventFlow.emit(LoginUiEvent.NavigateToHome)
         }
     }
 }

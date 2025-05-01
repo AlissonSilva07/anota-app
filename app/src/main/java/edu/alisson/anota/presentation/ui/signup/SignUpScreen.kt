@@ -2,6 +2,8 @@ package edu.alisson.anota.presentation.ui.signup
 
 import android.content.Context
 import android.net.Uri
+import android.util.Base64
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -14,6 +16,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,27 +27,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import edu.alisson.anota.presentation.components.ButtonVariant
 import edu.alisson.anota.presentation.components.CustomButton
 import edu.alisson.anota.presentation.components.CustomInput
 import edu.alisson.anota.presentation.components.PhotoPicker
 import edu.alisson.anota.presentation.components.TextFieldType
-import edu.alisson.anota.presentation.ui.theme.AnotaTheme
 import java.io.File
 
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
+    signUpScreenViewModel: SignUpScreenViewModel = hiltViewModel(),
     navigateToLogin: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordRepeat by remember { mutableStateOf("") }
+    val name by signUpScreenViewModel.name.collectAsState()
+    val email by signUpScreenViewModel.email.collectAsState()
+    val password by signUpScreenViewModel.password.collectAsState()
+    val passwordRepeat by signUpScreenViewModel.passwordRepeat.collectAsState()
 
     var selectedImageUri by remember { mutableStateOf<Uri?>(Uri.EMPTY) }
 
@@ -53,9 +57,20 @@ fun SignUpScreen(
             selectedImageUri = uri
             uri?.let {
                 val file = uriToFile(context, it)
+                val base64 = uriToBase64(context, it)
+                signUpScreenViewModel.onProfileImageChange(base64)
             }
         }
     )
+
+    LaunchedEffect(Unit) {
+        signUpScreenViewModel.eventFlow.collect { event ->
+            when (event) {
+                is SignUpUiEvent.ShowToast -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                SignUpUiEvent.NavigateToLogin -> navigateToLogin()
+            }
+        }
+    }
 
 
     Column(
@@ -80,24 +95,24 @@ fun SignUpScreen(
             CustomInput(
                 label = "Nome",
                 value = name,
-                onValueChange = {
-                    name = it
+                onValueChange = { newValue ->
+                    signUpScreenViewModel.onNameChange(newValue)
                 },
                 modifier = Modifier.fillMaxWidth()
             )
             CustomInput(
                 label = "Email",
                 value = email,
-                onValueChange = {
-                    email = it
+                onValueChange = { newValue ->
+                    signUpScreenViewModel.onEmailChange(newValue)
                 },
                 modifier = Modifier.fillMaxWidth()
             )
             CustomInput(
                 label = "Senha",
                 value = password,
-                onValueChange = {
-                    password = it
+                onValueChange = { newValue ->
+                    signUpScreenViewModel.onPasswordChange(newValue)
                 },
                 type = TextFieldType.PASSWORD,
                 modifier = Modifier.fillMaxWidth()
@@ -105,8 +120,8 @@ fun SignUpScreen(
             CustomInput(
                 label = "Repetir Senha",
                 value = passwordRepeat,
-                onValueChange = {
-                    passwordRepeat = it
+                onValueChange = { newValue ->
+                    signUpScreenViewModel.onPasswordRepeatChange(newValue)
                 },
                 type = TextFieldType.PASSWORD,
                 modifier = Modifier.fillMaxWidth()
@@ -115,7 +130,9 @@ fun SignUpScreen(
                 title = "Cadastrar",
                 variant = ButtonVariant.DEFAULT,
                 disabled = false,
-                onClick = {},
+                onClick = {
+                    signUpScreenViewModel.signUp()
+                },
                 modifier = Modifier.fillMaxWidth()
             )
             TextButton(
@@ -138,4 +155,10 @@ fun uriToFile(context: Context, uri: Uri): File? {
     val tempFile = File.createTempFile("profile_pic", ".jpg", context.cacheDir)
     inputStream.use { input -> tempFile.outputStream().use { output -> input.copyTo(output) } }
     return tempFile
+}
+
+fun uriToBase64(context: Context, uri: Uri): String? {
+    val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+    val byteArray = inputStream.readBytes()
+    return Base64.encodeToString(byteArray, Base64.DEFAULT)
 }
