@@ -1,11 +1,6 @@
 package edu.alisson.anota.data.repository
 
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.util.Base64
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -14,23 +9,12 @@ import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.domain.model.User
 import edu.alisson.anota.domain.repository.AuthRepository
 import kotlinx.coroutines.tasks.await
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val database: FirebaseDatabase,
 ) : AuthRepository {
-
-    private fun uriConvert(context: Context, uri: Uri): String? {
-        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-        val bitmap: Bitmap = BitmapFactory.decodeStream(inputStream)
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(byteArray, Base64.DEFAULT)
-    }
 
     override suspend fun signUpWithImage(
         name: String,
@@ -39,7 +23,6 @@ class AuthRepositoryImpl @Inject constructor(
         base64Image: String?
     ): Resource<FirebaseUser?> {
         return try {
-            // Create user
             Log.d("AuthRepositoryImpl", "$email, $password")
 
             val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
@@ -52,7 +35,6 @@ class AuthRepositoryImpl @Inject constructor(
 
             val uid = firebaseUser.uid
 
-            // Prepare user data
             val userMap = mapOf(
                 "uid" to uid,
                 "name" to name,
@@ -60,7 +42,6 @@ class AuthRepositoryImpl @Inject constructor(
                 "profileImage" to base64Image
             )
 
-            // Save user data to Realtime Database
             database.reference
                 .child("users")
                 .child(uid)
@@ -80,6 +61,30 @@ class AuthRepositoryImpl @Inject constructor(
             Resource.Success(result.user)
         } catch (e: Exception) {
             Resource.Error("Erro ao fazer login", e)
+        }
+    }
+
+    override suspend fun getUserData(uid: String): Resource<User> {
+        return try {
+            val snapshot = database.reference
+                .child("users")
+                .child(uid)
+                .get()
+                .await()
+
+            if (snapshot.exists()) {
+                val user = snapshot.getValue(User::class.java)
+
+                if (user != null) {
+                    Resource.Success(user)
+                } else {
+                    Resource.Error("User data is null")
+                }
+            } else {
+                Resource.Error("User not found")
+            }
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Unknown error while fetching user data")
         }
     }
 

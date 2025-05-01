@@ -1,9 +1,8 @@
 package edu.alisson.anota.domain.model
 
 data class User(
-    val uid: String,
-    val name: String,
-    val email: String,
-    val photoUrl: String? = null,
-    val profileImageBase64 : String? = null
+    val uid: String? = null,
+    val name: String? = null,
+    val email: String? = null,
+    val profileImage: String? = null
 )

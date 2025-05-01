@@ -2,6 +2,7 @@ package edu.alisson.anota.domain.repository
 
 import com.google.firebase.auth.FirebaseUser
 import edu.alisson.anota.data.utils.Resource
+import edu.alisson.anota.domain.model.User
 
 interface AuthRepository {
     suspend fun signUpWithImage(
@@ -13,4 +14,5 @@ interface AuthRepository {
     suspend fun login(email: String, password: String): Resource<FirebaseUser?>
     fun logout()
     fun getCurrentUser(): FirebaseUser?
+    suspend fun getUserData(uid: String): Resource<User>
 }
