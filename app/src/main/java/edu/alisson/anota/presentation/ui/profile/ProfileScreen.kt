@@ -39,6 +39,7 @@ import edu.alisson.anota.R
 import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.presentation.components.ButtonVariant
 import edu.alisson.anota.presentation.components.CustomButton
+import edu.alisson.anota.presentation.components.CustomImage
 import edu.alisson.anota.presentation.ui.theme.AnotaTheme
 
 @Composable
@@ -67,14 +68,9 @@ fun ProfileScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    AsyncImage(
-                        model = user.profileImage,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .width(width = 80.dp)
-                            .height(80.dp)
-                            .clip(RoundedCornerShape(percent = 100))
+                    CustomImage(
+                        base64String = user.profileImage,
+                        imgSize = 80
                     )
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),

@@ -14,6 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -21,6 +23,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_6
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.presentation.ui.home.components.CardLastNote
 import edu.alisson.anota.presentation.ui.home.components.HomeHeader
@@ -28,13 +31,20 @@ import edu.alisson.anota.presentation.ui.home.components.SpaceItem
 import edu.alisson.anota.presentation.ui.theme.AnotaTheme
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
+) {
+    val user by homeScreenViewModel.userData.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
     ) {
-        HomeHeader()
+        HomeHeader(
+            userData = user
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()

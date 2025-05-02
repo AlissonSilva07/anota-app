@@ -20,11 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import edu.alisson.anota.domain.model.User
 
 @Composable
 fun HomeHeader(
     modifier: Modifier = Modifier,
-    name: String = "Usuário(a)",
+    userData: User?,
 ) {
     Row(
         modifier = modifier
@@ -40,7 +41,7 @@ fun HomeHeader(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Oi, Alisson!",
+                text = "Oi, ${userData?.name ?: "Usuário(a)"}!",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.secondary
             )

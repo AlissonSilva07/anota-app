@@ -14,5 +14,4 @@ interface AuthRepository {
     suspend fun login(email: String, password: String): Resource<FirebaseUser?>
     fun logout()
     fun getCurrentUser(): FirebaseUser?
-    suspend fun getUserData(uid: String): Resource<User>
 }

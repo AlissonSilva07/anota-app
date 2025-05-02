@@ -1,4 +1,4 @@
-package edu.alisson.anota.presentation.ui.profile
+package edu.alisson.anota.presentation.ui.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -7,7 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.alisson.anota.data.utils.DataStoreManager
 import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.domain.model.User
-import edu.alisson.anota.domain.repository.AuthRepository
 import edu.alisson.anota.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,9 +14,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileScreenViewModel @Inject constructor(
+class HomeScreenViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val authRepository: AuthRepository,
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
@@ -30,51 +28,35 @@ class ProfileScreenViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             dataStoreManager.uidFlow.collect { uid ->
-                if (uid != null) {
-                    getUserData(uid)
+                if (!uid.isNullOrBlank()) {
+                    fetchUserData(uid)
                 }
             }
         }
     }
 
-    private suspend fun getUserData(uid: String) {
-        val localUserData = userRepository.getLocalUser(uid)
-        if (localUserData != null) {
-            _userData.value = localUserData
-            _userDataResponse.value = Resource.Success(localUserData)
-        } else {
-            fetchUserDataFromRemote(uid)
-        }
-    }
-
-    private suspend fun fetchUserDataFromRemote(uid: String) {
+    private suspend fun fetchUserData(uid: String) {
         try {
-            _userDataResponse.value = Resource.Loading()
             val result = userRepository.getUserData(uid)
 
             when (result) {
                 is Resource.Success -> {
                     _userData.value = result.data
                     _userDataResponse.value = Resource.Success(result.data)
-                    Log.d("ProfileScreenViewModel", "User data fetched: ${result.data}")
+                    Log.d("HomeScreenViewModel", "User data: ${result.data}")
                 }
-
                 is Resource.Error<*> -> {
                     _userDataResponse.value = Resource.Error("Error fetching user data")
-                    Log.e("ProfileScreenViewModel", "Error: ${result.message}")
+                    Log.e("HomeScreenViewModel", "Error: ${result.message}")
                 }
-
                 is Resource.Loading<*> -> {
-                    Log.d("ProfileScreenViewModel", "Loading user data")
+                    Log.d("HomeScreenViewModel", "Loading user data")
                 }
             }
         } catch (e: Exception) {
             _userDataResponse.value = Resource.Error(e.message ?: "An error occurred")
-            Log.e("ProfileScreenViewModel", "Exception: ${e.message}")
+            Log.e("HomeScreenViewModel", "Exception: ${e.message}")
         }
     }
-
-    fun logout() {
-        authRepository.logout()
-    }
 }
+
