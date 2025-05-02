@@ -24,6 +24,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import edu.alisson.anota.data.Constants.spaces
+import edu.alisson.anota.data.utils.Resource
+import edu.alisson.anota.domain.model.Note
+import edu.alisson.anota.domain.model.Space
 import edu.alisson.anota.presentation.ui.space.components.SpaceNoteItem
 import edu.alisson.anota.presentation.ui.theme.AnotaTheme
 
@@ -51,6 +54,45 @@ fun SpaceDetailsScreen(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            when (spaceDataResponse) {
+                is Resource.Error<*> -> {}
+                is Resource.Loading<*> -> {}
+                is Resource.Success<*> -> {
+                    if (spaceData != null) {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .padding(horizontal = 16.dp),
+                        ) {
+                            itemsIndexed(spaceData?.notes as List<Note>) { index, note ->
+                                SpaceNoteItem(
+                                    note = note,
+                                    onItemClick = {}
+                                )
+                                val lastIndex: Int = spaceData?.notes?.lastIndex!!
+                                if (index < lastIndex) {
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(vertical = 4.dp),
+                                        thickness = 1.dp,
+                                        color = MaterialTheme.colorScheme.outline
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        Text(
+                            text = "Nenhuma nota disponível",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier
+                                .padding(vertical = 32.dp)
+                                .align(Alignment.CenterHorizontally)
+                        )
+                    }
+
+                }
+            }
             Text(
                 text = "Todas as notas: ${spaceData?.notes?.size}",
                 style = MaterialTheme.typography.bodyLarge,
@@ -58,37 +100,7 @@ fun SpaceDetailsScreen(
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = 16.dp),
-            ) {
-                spaceData?.notes?.let { notes ->
-                    itemsIndexed(notes) { index, note ->
-                        SpaceNoteItem(
-                            note = note,
-                            onItemClick = {}
-                        )
-                        if (index < notes.lastIndex) {
-                            HorizontalDivider(
-                                modifier = Modifier.padding(vertical = 4.dp),
-                                thickness = 1.dp,
-                                color = MaterialTheme.colorScheme.outline
-                            )
-                        }
-                    }
-                } ?: item {
-                    Text(
-                        text = "Nenhuma nota disponível",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier
-                            .padding(vertical = 32.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                }
-            }
+
         }
 
     }
