@@ -4,7 +4,9 @@ import androidx.compose.ui.graphics.Color
 import edu.alisson.anota.domain.model.Note
 import edu.alisson.anota.domain.model.Space
 
-object Mocks {
+object Constants {
+    const val USER_PREFERENCES_FILE_NAME = "user_preferences"
+
     val spaces = listOf(
         Space(
             id = "1",

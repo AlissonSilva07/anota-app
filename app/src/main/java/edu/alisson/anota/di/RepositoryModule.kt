@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import edu.alisson.anota.data.repository.AuthRepositoryImpl
+import edu.alisson.anota.data.utils.DataStoreManager
 import edu.alisson.anota.domain.repository.AuthRepository
 import javax.inject.Singleton
 
@@ -19,7 +20,8 @@ object RepositoryModule {
     fun provideAuthRepository(
         firebaseAuth: FirebaseAuth,
         database: FirebaseDatabase,
+        dataStoreManager: DataStoreManager
     ): AuthRepository {
-        return AuthRepositoryImpl(firebaseAuth, database)
+        return AuthRepositoryImpl(firebaseAuth, database, dataStoreManager)
     }
 }

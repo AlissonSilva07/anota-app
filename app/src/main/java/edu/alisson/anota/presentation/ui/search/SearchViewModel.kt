@@ -1,7 +1,7 @@
 package edu.alisson.anota.presentation.ui.search
 
 import androidx.lifecycle.ViewModel
-import edu.alisson.anota.data.Mocks.spaces
+import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.domain.model.Note
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

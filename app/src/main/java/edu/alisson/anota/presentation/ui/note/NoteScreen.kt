@@ -42,7 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import edu.alisson.anota.data.Mocks.spaces
+import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.presentation.ui.note.components.InvisibleTextField
 import edu.alisson.anota.presentation.ui.note.components.InvisibleTextFieldType
 import edu.alisson.anota.presentation.ui.home.components.SpaceItem

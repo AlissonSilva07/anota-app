@@ -20,18 +20,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import edu.alisson.anota.data.Mocks.spaces
+import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.presentation.components.BottomNavBar
 import edu.alisson.anota.presentation.ui.search.AppSearchBar
-import edu.alisson.anota.presentation.ui.search.SearchViewModel
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)

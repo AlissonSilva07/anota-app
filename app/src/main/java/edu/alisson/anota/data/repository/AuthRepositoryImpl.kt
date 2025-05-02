@@ -1,19 +1,23 @@
 package edu.alisson.anota.data.repository
 
-
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+import edu.alisson.anota.data.utils.DataStoreManager
 import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.domain.model.User
 import edu.alisson.anota.domain.repository.AuthRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val database: FirebaseDatabase,
+    private val dataStoreManager: DataStoreManager
 ) : AuthRepository {
 
     override suspend fun signUpWithImage(
@@ -58,6 +62,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun login(email: String, password: String): Resource<FirebaseUser?> {
         return try {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            val user = result.user
+            user?.uid?.let { dataStoreManager.saveUid(it) }
             Resource.Success(result.user)
         } catch (e: Exception) {
             Resource.Error("Erro ao fazer login", e)
@@ -90,6 +96,9 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun logout() {
         firebaseAuth.signOut()
+        CoroutineScope(Dispatchers.IO).launch {
+            dataStoreManager.clearUid()
+        }
     }
 
     override fun getCurrentUser(): FirebaseUser? {

@@ -20,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import edu.alisson.anota.data.Mocks.spaces
+import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.presentation.ui.space.components.SpaceNoteItem
 import edu.alisson.anota.presentation.ui.theme.AnotaTheme
 

@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Devices.PIXEL_6
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import edu.alisson.anota.data.Mocks.spaces
+import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.presentation.ui.home.components.CardLastNote
 import edu.alisson.anota.presentation.ui.home.components.HomeHeader
 import edu.alisson.anota.presentation.ui.home.components.SpaceItem
