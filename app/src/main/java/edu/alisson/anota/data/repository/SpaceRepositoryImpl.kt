@@ -3,9 +3,11 @@ package edu.alisson.anota.data.repository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import edu.alisson.anota.data.dto.SpaceRequestResponse
+import edu.alisson.anota.data.mappers.toUserEntity
 import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.domain.model.Note
 import edu.alisson.anota.domain.model.Space
+import edu.alisson.anota.domain.model.User
 import edu.alisson.anota.domain.repository.SpaceRepository
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -96,5 +98,32 @@ class SpaceRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getSpaceById(spaceId: String): Resource<SpaceRequestResponse> {
+        return try {
+            val uid = firebaseAuth.currentUser?.uid
+                ?: return Resource.Error("Usuário não autenticado.")
 
+            val snapshot = database.reference
+                .child("users")
+                .child(uid)
+                .child("spaces")
+                .child(spaceId)
+                .get()
+                .await()
+
+            if (snapshot.exists()) {
+                val space = snapshot.getValue(SpaceRequestResponse::class.java)
+                if (space != null) {
+                    Resource.Success(space)
+                } else {
+                    Resource.Error("User data is null")
+                }
+            } else {
+                Resource.Error("User not found")
+            }
+
+        } catch (e: Exception) {
+            Resource.Error("Erro ao buscar espaços: ${e.message}")
+        }
+    }
 }

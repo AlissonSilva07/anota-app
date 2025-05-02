@@ -20,21 +20,29 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.presentation.components.BottomNavBar
 import edu.alisson.anota.presentation.ui.search.AppSearchBar
+import edu.alisson.anota.presentation.ui.space.SpaceDetailsScreenViewModel
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScaffold(
-    modifier: Modifier = Modifier, navController: NavHostController, content: @Composable () -> Unit
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    content: @Composable () -> Unit,
 ) {
     val currentDestination = navController.currentDestination?.route
     val currentDestinationName =
@@ -71,14 +79,14 @@ fun MainScaffold(
                     }
                 })
             } else if (currentDestination == Screen.SpaceDetails.route) {
-                val space = spaces.first()
-
+                val spaceDetailsScreenViewModel: SpaceDetailsScreenViewModel = hiltViewModel()
+                val spaceData by spaceDetailsScreenViewModel.spaceData.collectAsState()
                 TopAppBar(title = {
                     Column(
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(
-                            text = space.title,
+                            text = spaceData?.title ?: "Título",
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
@@ -86,7 +94,7 @@ fun MainScaffold(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = space.description,
+                            text = spaceData?.description ?: "Descrição",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.secondary,
                             maxLines = 1,

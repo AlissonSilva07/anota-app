@@ -13,6 +13,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.presentation.ui.space.components.SpaceNoteItem
 import edu.alisson.anota.presentation.ui.theme.AnotaTheme
@@ -30,8 +33,14 @@ fun SpaceDetailsScreen(
     modifier: Modifier = Modifier,
     spaceId: String,
     navigateBack: () -> Unit,
+    spaceDetailsScreenViewModel: SpaceDetailsScreenViewModel = hiltViewModel()
 ) {
-    val space by remember { mutableStateOf(spaces.first()) }
+    val spaceData by spaceDetailsScreenViewModel.spaceData.collectAsState()
+    val spaceDataResponse by spaceDetailsScreenViewModel.spaceDataResponse.collectAsState()
+
+    LaunchedEffect(spaceId) {
+        spaceDetailsScreenViewModel.getSpaceById(spaceId)
+    }
 
     Column(
         modifier = modifier
@@ -43,7 +52,7 @@ fun SpaceDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Todas as notas: ${space.notes?.size}",
+                text = "Todas as notas: ${spaceData?.notes?.size}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -55,7 +64,7 @@ fun SpaceDetailsScreen(
                     .weight(1f)
                     .padding(horizontal = 16.dp),
             ) {
-                space.notes?.let { notes ->
+                spaceData?.notes?.let { notes ->
                     itemsIndexed(notes) { index, note ->
                         SpaceNoteItem(
                             note = note,

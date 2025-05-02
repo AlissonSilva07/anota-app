@@ -6,4 +6,5 @@ import edu.alisson.anota.data.utils.Resource
 interface SpaceRepository {
     suspend fun saveSpace(space: SpaceRequestResponse)
     suspend fun getAllSpaces(): Resource<List<SpaceRequestResponse>?>
+    suspend fun getSpaceById(id: String): Resource<SpaceRequestResponse>
 }
