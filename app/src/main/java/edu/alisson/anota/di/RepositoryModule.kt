@@ -8,9 +8,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import edu.alisson.anota.data.local.UserDatabase
 import edu.alisson.anota.data.repository.AuthRepositoryImpl
+import edu.alisson.anota.data.repository.SpaceRepositoryImpl
 import edu.alisson.anota.data.repository.UserRepositoryImpl
 import edu.alisson.anota.data.utils.DataStoreManager
 import edu.alisson.anota.domain.repository.AuthRepository
+import edu.alisson.anota.domain.repository.SpaceRepository
 import edu.alisson.anota.domain.repository.UserRepository
 import javax.inject.Singleton
 
@@ -35,5 +37,14 @@ object RepositoryModule {
         localDatabase: UserDatabase
     ): UserRepository {
         return UserRepositoryImpl(database, localDatabase)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSpaceRepository(
+        firebaseAuth: FirebaseAuth,
+        database: FirebaseDatabase,
+    ): SpaceRepository {
+        return SpaceRepositoryImpl(firebaseAuth, database)
     }
 }
