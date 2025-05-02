@@ -23,7 +23,9 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             MainScaffold(
                 navController = navController
             ) {
-                HomeScreen()
+                HomeScreen(
+                    navController = navController
+                )
             }
         }
 

@@ -93,8 +93,7 @@ fun SpacesScreen(
                 is Resource.Loading<*> -> {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
+                            .fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
