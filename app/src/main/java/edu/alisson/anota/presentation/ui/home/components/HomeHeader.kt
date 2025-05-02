@@ -3,16 +3,8 @@ package edu.alisson.anota.presentation.ui.home.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import edu.alisson.anota.domain.model.User
+import edu.alisson.anota.presentation.components.CustomImage
 
 @Composable
 fun HomeHeader(
@@ -46,26 +39,9 @@ fun HomeHeader(
                 color = MaterialTheme.colorScheme.secondary
             )
         }
-        Card(
-            modifier = modifier
-                .size(48.dp),
-            shape = RoundedCornerShape(percent = 100),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
-            Column(
-                modifier = modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Person,
-                    contentDescription = "Notifications",
-                    tint = MaterialTheme.colorScheme.surface
-                )
-            }
-        }
+        CustomImage(
+            base64Image = userData?.profileImage,
+            imgSize = 48
+        )
     }
 }

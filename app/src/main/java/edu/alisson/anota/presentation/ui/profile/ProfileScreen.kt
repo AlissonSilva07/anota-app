@@ -69,7 +69,7 @@ fun ProfileScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     CustomImage(
-                        base64String = user.profileImage,
+                        base64Image = user.profileImage,
                         imgSize = 80
                     )
                     Column(
