@@ -1,11 +1,15 @@
 package edu.alisson.anota.presentation.ui.spaces
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.alisson.anota.data.dto.SpaceRequestResponse
+import edu.alisson.anota.data.mappers.toSpace
+import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.domain.model.Space
+import edu.alisson.anota.domain.model.User
 import edu.alisson.anota.domain.repository.SpaceRepository
 import edu.alisson.anota.presentation.ui.signup.SignUpUiEvent
 import edu.alisson.anota.presentation.utils.toHex
@@ -40,6 +44,12 @@ class SpacesScreenViewModel @Inject constructor(
     private val _descriptionError = MutableStateFlow<String?>(null)
     val descriptionError = _descriptionError.asStateFlow()
 
+    private val _spacesData = MutableStateFlow<List<Space>?>(null)
+    val spacesData = _spacesData.asStateFlow()
+
+    private val _spacesDataResponse = MutableStateFlow<Resource<List<SpaceRequestResponse>?>>(Resource.Loading())
+    val spacesDataResponse = _spacesDataResponse.asStateFlow()
+
     // UI Events
     private val _eventFlow = MutableSharedFlow<SignUpUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -70,6 +80,34 @@ class SpacesScreenViewModel @Inject constructor(
 //            if (hex != null) {
 //                selectedColor = hexToColor(hex)
 //            }
+        }
+    }
+
+    init {
+        getAllSpaces()
+    }
+
+    fun getAllSpaces() {
+        viewModelScope.launch {
+            try {
+                val result = spaceRepository.getAllSpaces()
+
+                when (result) {
+                    is Resource.Success -> {
+                        _spacesData.value = result.data?.map { it.toSpace() }
+                        _spacesDataResponse.value = Resource.Success(result.data)
+                        Log.d("HomeScreenViewModel", "Spaces: ${_spacesData.value}")
+                    }
+                    is Resource.Error<*> -> {
+                        _spacesDataResponse.value = Resource.Error("Erro ao buscar espaços.")
+                    }
+                    is Resource.Loading<*> -> {
+                    }
+                }
+            } catch (e: Exception) {
+                _spacesDataResponse.value = Resource.Error(e.message ?: "Erro ao buscar espaços.")
+                Log.e("HomeScreenViewModel", "Exception: ${e.message}")
+            }
         }
     }
 

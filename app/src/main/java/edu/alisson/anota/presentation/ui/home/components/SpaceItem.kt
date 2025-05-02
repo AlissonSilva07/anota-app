@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import edu.alisson.anota.domain.model.Space
 
@@ -43,7 +44,7 @@ fun SpaceItem(
                 modifier = modifier
                     .size(16.dp)
                     .clip(RoundedCornerShape(percent = 100))
-                    .background(space.color)
+                    .background(space.color ?: Color.Red)
             )
             Text(
                 text = space.title,

@@ -2,6 +2,7 @@ package edu.alisson.anota.presentation.ui.spaces
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import edu.alisson.anota.data.Constants.spaces
+import edu.alisson.anota.data.utils.Resource
+import edu.alisson.anota.domain.model.Space
 import edu.alisson.anota.presentation.components.ButtonVariant
 import edu.alisson.anota.presentation.components.CustomButton
 import edu.alisson.anota.presentation.components.CustomColorPicker
@@ -56,6 +60,9 @@ fun SpacesScreen(
         mutableStateOf(false)
     }
 
+    val spacesData by spacesScreenViewModel.spacesData.collectAsState()
+    val spacesDataResponse by spacesScreenViewModel.spacesDataResponse.collectAsState()
+
     val title by spacesScreenViewModel.title.collectAsState()
     val description by spacesScreenViewModel.description.collectAsState()
     val selectedColor by spacesScreenViewModel.selectedColor.collectAsState()
@@ -75,26 +82,59 @@ fun SpacesScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                itemsIndexed(spaces) { index, space ->
-                    SpaceItem(
-                        space = space,
-                        onItemClick = {
-                            navController.navigate(Screen.SpaceDetails.createRoute(spaceId = space.id))
-                        }
+            when (spacesDataResponse) {
+                is Resource.Error<*> -> {
+                    Text(
+                        text = "Erro ao carregar espaços",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.secondary
                     )
-                    if (index < spaces.lastIndex) {
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            thickness = 1.dp,
-                            color = MaterialTheme.colorScheme.outline
+                }
+                is Resource.Loading<*> -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+                is Resource.Success<*> -> {
+                    if (spacesData != null) {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            itemsIndexed(spacesData as List<Space>) { index, space ->
+                                SpaceItem(
+                                    space = space,
+                                    onItemClick = {
+                                        navController.navigate(Screen.SpaceDetails.createRoute(spaceId = space.id))
+                                    }
+                                )
+                                if (index < spaces.lastIndex) {
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(vertical = 4.dp),
+                                        thickness = 1.dp,
+                                        color = MaterialTheme.colorScheme.outline
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        Text(
+                            text = "Não existem espaços criados.",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }
             }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),

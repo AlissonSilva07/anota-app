@@ -1,12 +1,11 @@
 package edu.alisson.anota.presentation.ui.signup
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.domain.repository.AuthRepository
-import edu.alisson.anota.presentation.ui.signup.SignUpUiEvent.*
+import edu.alisson.anota.presentation.ui.signup.SignUpUiEvent.ShowToast
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
