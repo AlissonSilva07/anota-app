@@ -87,7 +87,6 @@ class SpacesScreenViewModel @Inject constructor(
                     is Resource.Success -> {
                         _spacesData.value = result.data?.map { it.toSpace() }
                         _spacesDataResponse.value = Resource.Success(result.data)
-                        Log.d("HomeScreenViewModel", "Spaces: ${_spacesData.value}")
                     }
                     is Resource.Error<*> -> {
                         _spacesDataResponse.value = Resource.Error("Erro ao buscar espaços.")

@@ -5,4 +5,5 @@ import edu.alisson.anota.domain.model.Note
 
 interface NotesRepository {
     suspend fun saveNote(note: Note): Resource<Nothing>
+    suspend fun getNoteById(spaceId: String, noteId: String): Resource<Note>
 }

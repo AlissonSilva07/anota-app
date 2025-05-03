@@ -1,6 +1,7 @@
 package edu.alisson.anota.presentation.ui.note
 
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
@@ -50,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import edu.alisson.anota.data.Constants.spaces
+import edu.alisson.anota.data.dto.NoteLabelResponse
 import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.presentation.components.ButtonVariant
 import edu.alisson.anota.presentation.components.CustomButton
@@ -68,13 +70,17 @@ import kotlin.collections.orEmpty
 @Composable
 fun NoteScreen(
     modifier: Modifier = Modifier,
+    spaceId: String? = null,
     noteId: String? = null,
     navigateBack: () -> Unit,
     notesScreenViewModel: NotesScreenViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val intent = remember(noteId) {
-        if (noteId == null) NoteIntent.Create else NoteIntent.Edit(noteId)
+    val intent: NoteIntent = remember(spaceId, noteId) {
+        when {
+            spaceId != null && noteId != null -> NoteIntent.Edit(spaceId, noteId)
+            else -> NoteIntent.Create
+        }
     }
 
     val sheetState = rememberModalBottomSheetState()
@@ -94,10 +100,15 @@ fun NoteScreen(
 
     LaunchedEffect(Unit) {
         notesScreenViewModel.eventFlow.collect { event ->
-            when (event is LoginUiEvent.ShowToast) {
-                true -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                false -> {}
+            if (event is LoginUiEvent.ShowToast) {
+                Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    LaunchedEffect(intent) {
+        if (intent is NoteIntent.Edit) {
+            notesScreenViewModel.getNoteById(intent.spaceId, intent.noteId)
         }
     }
 
@@ -177,7 +188,7 @@ fun NoteScreen(
                         Text(
                             text = when (intent) {
                                 is NoteIntent.Create -> selectedSpace?.label ?: "Selec. Espaço"
-                                is NoteIntent.Edit -> "Space 1"
+                                is NoteIntent.Edit -> selectedSpace?.label ?: "Selec. Espaço"
                             },
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.widthIn(

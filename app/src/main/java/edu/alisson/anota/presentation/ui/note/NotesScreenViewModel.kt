@@ -32,6 +32,12 @@ class NotesScreenViewModel @Inject constructor(
     private val _spaceLabelsResponse = MutableStateFlow<Resource<List<NoteLabelResponse>?>>(Resource.Loading())
     val spaceLabelsResponse = _spaceLabelsResponse.asStateFlow()
 
+    private val _noteData = MutableStateFlow<Note?>(null)
+    val noteData = _noteData.asStateFlow()
+
+    private val _noteDataResponse = MutableStateFlow<Resource<Note?>>(Resource.Loading())
+    val noteDataResponse = _noteDataResponse.asStateFlow()
+
     private val _selectedSpace = MutableStateFlow<NoteLabelResponse?>(null)
     val selectedSpace = _selectedSpace.asStateFlow()
 
@@ -75,7 +81,6 @@ class NotesScreenViewModel @Inject constructor(
                     is Resource.Success -> {
                         _spaceLabels.value = result.data
                         _spaceLabelsResponse.value = Resource.Success(result.data)
-                        Log.d("NotesScreenViewModel", "SpaceLabels: ${_spaceLabels.value}")
                     }
 
                     is Resource.Error<*> -> {
@@ -123,6 +128,38 @@ class NotesScreenViewModel @Inject constructor(
                 )
             )
         } catch (e: Exception) {
+            Log.e("NotesScreenViewModel", "Exception: ${e.message}")
+        }
+    }
+
+    fun getNoteById(spaceId: String, noteId: String) = viewModelScope.launch {
+        try {
+            val result = notesRepository.getNoteById(spaceId = spaceId, noteId = noteId)
+
+            when (result) {
+                is Resource.Success -> {
+                    val note = result.data
+                    _noteData.value = note
+                    _noteDataResponse.value = Resource.Success(note)
+
+                    // ✅ Automatically populate input fields
+                    if (note != null) {
+                        _noteTitle.value = note.title
+                        _noteBody.value = note.content
+                        _selectedSpace.value = NoteLabelResponse(note.spaceID, note.spaceTitle)
+                    }
+                }
+
+                is Resource.Error<*> -> {
+                    _noteDataResponse.value = Resource.Error("Erro ao buscar nota.")
+                }
+
+                is Resource.Loading<*> -> {
+                    _noteDataResponse.value = Resource.Loading()
+                }
+            }
+        } catch (e: Exception) {
+            _noteDataResponse.value = Resource.Error(e.message ?: "Erro ao buscar nota.")
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
         }
     }

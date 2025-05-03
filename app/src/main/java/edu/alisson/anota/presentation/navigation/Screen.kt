@@ -10,8 +10,8 @@ sealed class Screen(val route: String) {
     data object SpaceDetails : Screen("spaces/{spaceId}") {
         fun createRoute(spaceId: String): String = "spaces/$spaceId"
     }
-    data object NoteCreate : Screen("note")
-    data object NoteDetails : Screen("note/{noteId}") {
-        fun createRoute(noteId: String): String = "spaces/note/$noteId"
+    data object NoteCreate : Screen("new-note")
+    data object NoteDetails : Screen("spaces/{spaceId}/note/{noteId}") {
+        fun createRoute(spaceId: String, noteId: String): String = "spaces/$spaceId/note/$noteId"
     }
 }

@@ -13,6 +13,7 @@ class NotesRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val database: FirebaseDatabase,
 ): NotesRepository {
+
     override suspend fun saveNote(note: Note): Resource<Nothing> {
         return try {
             val uid = firebaseAuth.currentUser?.uid
@@ -55,4 +56,32 @@ class NotesRepositoryImpl @Inject constructor(
         } as Resource<Nothing>
     }
 
+    override suspend fun getNoteById(spaceId: String, noteId: String): Resource<Note> {
+        return try {
+            val uid = firebaseAuth.currentUser?.uid
+                ?: return Resource.Error("Usuário não autenticado.")
+
+            val noteRef = database.reference
+                .child("users")
+                .child(uid)
+                .child("spaces")
+                .child(spaceId)
+                .child("notes")
+                .child(noteId)
+
+            val snapshot = noteRef.get().await()
+
+            if (!snapshot.exists()) {
+                return Resource.Error("Nota não encontrada.")
+            }
+
+            val note = snapshot.getValue(Note::class.java)
+                ?: return Resource.Error("Erro ao converter a nota.")
+
+            Resource.Success(note)
+
+        } catch (e: Exception) {
+            Resource.Error("Erro ao buscar nota: ${e.message}")
+        }
+    }
 }

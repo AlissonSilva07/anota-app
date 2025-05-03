@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
@@ -68,7 +69,7 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             MainScaffold(navController = navController) {
                 SpaceDetailsScreen(
                     spaceId = spaceId,
-                    navigateBack = { navController.popBackStack() }
+                    navController = navController
                 )
             }
         }
@@ -86,13 +87,16 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
         composable(
             route = Screen.NoteDetails.route,
             arguments = listOf(
-                navArgument("noteId") { nullable = false }
+                navArgument("spaceId") { type = NavType.StringType },
+                navArgument("noteId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val noteId = backStackEntry.arguments?.getString("noteId")!!
+            val spaceId = backStackEntry.arguments?.getString("spaceId")
+            val noteId = backStackEntry.arguments?.getString("noteId")
 
             MainScaffold(navController = navController) {
                 NoteScreen(
+                    spaceId = spaceId,
                     noteId = noteId,
                     navigateBack = { navController.popBackStack() }
                 )

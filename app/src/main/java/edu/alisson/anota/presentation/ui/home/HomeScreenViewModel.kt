@@ -43,7 +43,6 @@ class HomeScreenViewModel @Inject constructor(
                 is Resource.Success -> {
                     _userData.value = result.data
                     _userDataResponse.value = Resource.Success(result.data)
-                    Log.d("HomeScreenViewModel", "User data: ${result.data}")
                 }
                 is Resource.Error<*> -> {
                     _userDataResponse.value = Resource.Error("Error fetching user data")

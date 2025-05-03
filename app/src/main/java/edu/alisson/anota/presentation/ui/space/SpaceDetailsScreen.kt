@@ -22,13 +22,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.domain.model.Note
 import edu.alisson.anota.domain.model.Space
+import edu.alisson.anota.presentation.navigation.Screen
 import edu.alisson.anota.presentation.ui.space.components.SpaceNoteItem
 import edu.alisson.anota.presentation.ui.theme.AnotaTheme
 
@@ -37,7 +40,7 @@ import edu.alisson.anota.presentation.ui.theme.AnotaTheme
 fun SpaceDetailsScreen(
     modifier: Modifier = Modifier,
     spaceId: String,
-    navigateBack: () -> Unit,
+    navController: NavController,
     spaceDetailsScreenViewModel: SpaceDetailsScreenViewModel = hiltViewModel()
 ) {
     val spaceData by spaceDetailsScreenViewModel.spaceData.collectAsState()
@@ -94,7 +97,12 @@ fun SpaceDetailsScreen(
                             itemsIndexed(notes) { index, note ->
                                 SpaceNoteItem(
                                     note = note,
-                                    onItemClick = {}
+                                    onItemClick = {
+                                        navController.navigate(Screen.NoteDetails.createRoute(
+                                            spaceId = spaceId,
+                                            noteId = note.id
+                                        ))
+                                    }
                                 )
                                 if (index < lastIndex) {
                                     HorizontalDivider(
@@ -129,7 +137,7 @@ private fun SpacesScreenPrev() {
     ) {
         SpaceDetailsScreen(
             spaceId = "1",
-            navigateBack = {}
+            navController = NavController(LocalContext.current)
         )
     }
 }
