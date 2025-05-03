@@ -9,4 +9,5 @@ interface SpaceRepository {
     suspend fun getAllSpaces(): Resource<List<SpaceRequestResponse>?>
     suspend fun getAllSpaceLabels(): Resource<List<NoteLabelResponse>?>
     suspend fun getSpaceById(id: String): Resource<SpaceRequestResponse>
+    suspend fun deleteSpaceById(spaceId: String): Resource<Nothing>
 }

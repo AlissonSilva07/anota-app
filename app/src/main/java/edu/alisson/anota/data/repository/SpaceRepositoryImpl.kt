@@ -176,4 +176,23 @@ class SpaceRepositoryImpl @Inject constructor(
             Resource.Error("Erro ao buscar espaço: ${e.message}")
         }
     }
+
+    override suspend fun deleteSpaceById(spaceId: String): Resource<Nothing> {
+        return try {
+            val uid = firebaseAuth.currentUser?.uid
+                ?: return Resource.Error("Usuário não autenticado.")
+
+            val noteRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(uid)
+                .child("spaces")
+                .child(spaceId)
+
+            noteRef.removeValue().await()
+
+            Resource.Success(null)
+        } catch (e: Exception) {
+            Resource.Error("Não foi possível excluir o espaço", e)
+        } as Resource<Nothing>
+    }
 }

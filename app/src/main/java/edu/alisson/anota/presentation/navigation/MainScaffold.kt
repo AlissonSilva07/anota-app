@@ -11,6 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -24,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -52,6 +55,7 @@ fun MainScaffold(
     val fabRoutes = listOf(
         Screen.Home.route, Screen.SpaceDetails.route
     )
+    var menuExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -114,11 +118,39 @@ fun MainScaffold(
                     },
                     actions = {
                         IconButton(
-                            onClick = {}) {
+                            onClick = {
+                                menuExpanded = true
+                            }
+                        ) {
                             Icon(
                                 imageVector = Icons.Outlined.MoreVert,
                                 contentDescription = "Ações",
                                 tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false },
+                            offset = androidx.compose.ui.unit.DpOffset(x = (-24).dp, y = 0.dp)
+                        ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = "Excluir",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                },
+                                onClick = {
+                                    spaceDetailsScreenViewModel.deleteSpace(
+                                        onSuccess = {
+                                            navController.popBackStack()
+                                            menuExpanded = false
+                                        },
+                                        spaceId = spaceData?.id ?: ""
+                                    )
+                                }
                             )
                         }
                     }

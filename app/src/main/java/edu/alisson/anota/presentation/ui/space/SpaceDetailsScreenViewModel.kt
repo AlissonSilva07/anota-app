@@ -47,4 +47,21 @@ class SpaceDetailsScreenViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteSpace(onSuccess: () -> Unit, spaceId: String) {
+        viewModelScope.launch {
+            try {
+                if (spaceId.isBlank()) {
+                    return@launch
+                }
+
+                spaceRepository.deleteSpaceById(
+                    spaceId = spaceId
+                )
+                onSuccess()
+            } catch (e: Exception) {
+                Log.e("NotesScreenViewModel", "Exception: ${e.message}")
+            }
+        }
+    }
 }
