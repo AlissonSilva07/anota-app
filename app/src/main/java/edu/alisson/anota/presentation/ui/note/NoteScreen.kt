@@ -22,6 +22,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Card
@@ -168,12 +170,15 @@ fun NoteScreen(
                     shape = RoundedCornerShape(percent = 100),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.primary
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = MaterialTheme.colorScheme.outline,
+                        disabledContentColor = MaterialTheme.colorScheme.primary
                     ),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 2.dp
                     ),
+                    enabled = intent is NoteIntent.Create,
                     onClick = {
                         isOpenModal = true
                     }
@@ -198,9 +203,9 @@ fun NoteScreen(
                             overflow = TextOverflow.MiddleEllipsis
                         )
                         Icon(
-                            imageVector = Icons.Outlined.ChevronRight,
-                            contentDescription = "Adicionar Foto",
-                            tint = MaterialTheme.colorScheme.secondary
+                            imageVector = if (intent is NoteIntent.Create) Icons.Outlined.ChevronRight else Icons.Outlined.Lock,
+                            contentDescription = "Selecionar Espaço",
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -224,8 +229,19 @@ fun NoteScreen(
                     ) {
                         IconButton(
                             onClick = {
-                                notesScreenViewModel.createNote()
-                                navigateBack()
+                                if (intent is NoteIntent.Create) {
+                                    notesScreenViewModel.createNote(
+                                        onSuccess = {
+                                            navigateBack()
+                                        }
+                                    )
+                                } else {
+                                    notesScreenViewModel.editNote(
+                                        onSuccess = {
+                                            navigateBack()
+                                        }
+                                    )
+                                }
                             },
                         ) {
                             Icon(
@@ -235,11 +251,11 @@ fun NoteScreen(
                             )
                         }
                         IconButton(
-                            onClick = { },
+                            onClick = { navigateBack() },
                         ) {
                             Icon(
-                                imageVector = Icons.Outlined.Share,
-                                contentDescription = "Compartilhar",
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = "Deletar e sair",
                                 tint = MaterialTheme.colorScheme.surface
                             )
                         }
@@ -247,8 +263,8 @@ fun NoteScreen(
                             onClick = { navigateBack() },
                         ) {
                             Icon(
-                                imageVector = Icons.Outlined.Delete,
-                                contentDescription = "Deletar e sair",
+                                imageVector = Icons.Outlined.Logout,
+                                contentDescription = "Sair",
                                 tint = MaterialTheme.colorScheme.surface
                             )
                         }

@@ -97,7 +97,7 @@ class NotesScreenViewModel @Inject constructor(
         }
     }
 
-    fun createNote() = viewModelScope.launch {
+    fun createNote(onSuccess: () -> Unit) = viewModelScope.launch {
         if (_selectedSpace.value == null) {
             _eventFlow.emit(LoginUiEvent.ShowToast("Escolha um espaço para salvar a nota."))
         }
@@ -127,6 +127,7 @@ class NotesScreenViewModel @Inject constructor(
                     updatedAt = currentTimestamp
                 )
             )
+            onSuccess()
         } catch (e: Exception) {
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
         }
@@ -160,6 +161,44 @@ class NotesScreenViewModel @Inject constructor(
             }
         } catch (e: Exception) {
             _noteDataResponse.value = Resource.Error(e.message ?: "Erro ao buscar nota.")
+            Log.e("NotesScreenViewModel", "Exception: ${e.message}")
+        }
+    }
+
+    fun editNote(onSuccess: () -> Unit) = viewModelScope.launch {
+        if (_selectedSpace.value == null) {
+            _eventFlow.emit(LoginUiEvent.ShowToast("Escolha um espaço para salvar a nota."))
+        }
+
+        if (noteTitle.value.isBlank()) {
+            _noteTitleError.value = "Escolha um nome para sua nota"
+        }
+
+        if (noteBody.value.isBlank()) {
+            _noteBodyError.value = "Escolha um corpo para sua nota"
+        }
+
+        try {
+            val title = _noteTitle.value
+            val body = _noteBody.value
+            val spaceId = _selectedSpace.value?.id ?: ""
+            val currentTimestamp = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).format(Date())
+
+            notesRepository.editNoteById(
+                spaceId = spaceId,
+                noteId = _noteData.value?.id ?: "",
+                updatedNote = Note(
+                    id = "",
+                    title = title,
+                    content = body,
+                    spaceID = spaceId,
+                    spaceTitle = _selectedSpace.value?.label ?: "",
+                    createdAt = currentTimestamp,
+                    updatedAt = currentTimestamp
+                )
+            )
+            onSuccess()
+        } catch (e: Exception) {
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
         }
     }

@@ -64,6 +64,10 @@ fun InvisibleTextField(
         onValueChange = onValueChange,
         modifier = modifier.offset { IntOffset(offsetX.roundToInt(), 0) },
         textStyle = TextStyle(
+            fontFamily = if (type == InvisibleTextFieldType.TITLE)
+                MaterialTheme.typography.titleLarge.fontFamily
+            else
+                MaterialTheme.typography.bodyLarge.fontFamily,
             color = MaterialTheme.colorScheme.primary,
             fontSize = if (type == InvisibleTextFieldType.TITLE)
                 MaterialTheme.typography.titleLarge.fontSize
@@ -80,6 +84,10 @@ fun InvisibleTextField(
             if (value.isEmpty()) {
                 Text(
                     text = placeholder,
+                    fontFamily = if (type == InvisibleTextFieldType.TITLE)
+                        MaterialTheme.typography.titleLarge.fontFamily
+                    else
+                        MaterialTheme.typography.bodyLarge.fontFamily,
                     color = if (error != null)
                         MaterialTheme.colorScheme.error
                     else

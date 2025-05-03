@@ -84,4 +84,37 @@ class NotesRepositoryImpl @Inject constructor(
             Resource.Error("Erro ao buscar nota: ${e.message}")
         }
     }
+
+    override suspend fun editNoteById(spaceId: String, noteId: String, updatedNote: Note): Resource<Nothing> {
+        return try {
+            val uid = firebaseAuth.currentUser?.uid
+                ?: return Resource.Error("Usuário não autenticado.")
+
+            val noteRef = database.reference
+                .child("users")
+                .child(uid)
+                .child("spaces")
+                .child(spaceId)
+                .child("notes")
+                .child(noteId)
+
+            val snapshot = noteRef.get().await()
+            if (!snapshot.exists()) {
+                return Resource.Error("Nota não encontrada.")
+            }
+
+            val updatedFields = mapOf(
+                "title" to updatedNote.title,
+                "content" to updatedNote.content,
+                "updatedAt" to updatedNote.updatedAt
+            )
+
+            noteRef.updateChildren(updatedFields).await()
+
+            Resource.Success(null)
+        } catch (e: Exception) {
+            Log.d("NotesRepository", "Erro ao editar a nota: ${e.message}")
+            Resource.Error("Erro ao editar a nota: ${e.message}")
+        } as Resource<Nothing>
+    }
 }

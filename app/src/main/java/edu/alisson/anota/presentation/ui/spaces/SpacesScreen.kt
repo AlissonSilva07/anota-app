@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +71,10 @@ fun SpacesScreen(
     val titleError by spacesScreenViewModel.titleError.collectAsState()
     val descriptionError by spacesScreenViewModel.descriptionError.collectAsState()
 
+    LaunchedEffect(Unit) {
+        spacesScreenViewModel.getAllSpaces()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -108,14 +113,15 @@ fun SpacesScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                         ) {
-                            itemsIndexed(spacesData as List<Space>) { index, space ->
+                            val currentSpaces = spacesData as List<Space>
+                            itemsIndexed(currentSpaces) { index, space ->
                                 SpaceItem(
                                     space = space,
                                     onItemClick = {
                                         navController.navigate(Screen.SpaceDetails.createRoute(spaceId = space.id))
                                     }
                                 )
-                                if (index < spaces.lastIndex) {
+                                if (index < currentSpaces.lastIndex) {
                                     HorizontalDivider(
                                         modifier = Modifier.padding(vertical = 4.dp),
                                         thickness = 1.dp,
@@ -210,9 +216,13 @@ fun SpacesScreen(
                     variant = ButtonVariant.DEFAULT,
                     disabled = false,
                     onClick = {
-                        spacesScreenViewModel.saveSpace()
-                        spacesScreenViewModel.clearForm()
-                        isOpenModal = false
+                        spacesScreenViewModel.saveSpace(
+                            onSuccess = {
+                                spacesScreenViewModel.getAllSpaces()
+                                spacesScreenViewModel.clearForm()
+                                isOpenModal = false
+                            }
+                        )
                     }
                 )
                 Spacer(Modifier.height(16.dp))

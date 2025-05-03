@@ -1,6 +1,5 @@
 package edu.alisson.anota.presentation.ui.space
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,8 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,10 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.data.utils.Resource
-import edu.alisson.anota.domain.model.Note
-import edu.alisson.anota.domain.model.Space
 import edu.alisson.anota.presentation.navigation.Screen
 import edu.alisson.anota.presentation.ui.space.components.SpaceNoteItem
 import edu.alisson.anota.presentation.ui.theme.AnotaTheme
@@ -47,7 +41,6 @@ fun SpaceDetailsScreen(
     val spaceDataResponse by spaceDetailsScreenViewModel.spaceDataResponse.collectAsState()
 
     LaunchedEffect(Unit) {
-        Log.d("SpaceDetailsScreen", "LaunchedEffect: $spaceId")
         spaceDetailsScreenViewModel.getSpaceById(spaceId)
     }
 

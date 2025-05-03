@@ -74,10 +74,6 @@ class SpacesScreenViewModel @Inject constructor(
         _descriptionError.value = null
     }
 
-    init {
-        getAllSpaces()
-    }
-
     fun getAllSpaces() {
         viewModelScope.launch {
             try {
@@ -101,7 +97,7 @@ class SpacesScreenViewModel @Inject constructor(
         }
     }
 
-    fun saveSpace() {
+    fun saveSpace(onSuccess: () -> Unit) {
         viewModelScope.launch {
             val title = _title.value
             val description = _description.value
@@ -121,6 +117,7 @@ class SpacesScreenViewModel @Inject constructor(
                     updatedAt = currentTimestamp,
                 )
             )
+            onSuccess()
         }
     }
 }
