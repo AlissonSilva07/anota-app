@@ -74,15 +74,6 @@ class SpacesScreenViewModel @Inject constructor(
         _descriptionError.value = null
     }
 
-    fun loadColor(uid: String) {
-        viewModelScope.launch {
-//            val hex = authRepository.getUserColor(uid)
-//            if (hex != null) {
-//                selectedColor = hexToColor(hex)
-//            }
-        }
-    }
-
     init {
         getAllSpaces()
     }

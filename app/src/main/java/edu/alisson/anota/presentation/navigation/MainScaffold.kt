@@ -145,7 +145,7 @@ fun MainScaffold(
                     contentColor = MaterialTheme.colorScheme.surface,
                     shape = RoundedCornerShape(8.dp),
                     onClick = {
-                        navController.navigate(Screen.NoteDetails.route)
+                        navController.navigate(Screen.NoteCreate.route)
                     }
                 ) {
                     Row(
