@@ -111,19 +111,38 @@ class SpaceRepositoryImpl @Inject constructor(
                 .get()
                 .await()
 
-            if (snapshot.exists()) {
-                val space = snapshot.getValue(SpaceRequestResponse::class.java)
-                if (space != null) {
-                    Resource.Success(space)
-                } else {
-                    Resource.Error("User data is null")
-                }
-            } else {
-                Resource.Error("User not found")
+            if (!snapshot.exists()) {
+                return Resource.Error("Espaço não encontrado.")
             }
 
+            val id = snapshot.child("id").getValue(String::class.java) ?: ""
+            val title = snapshot.child("title").getValue(String::class.java) ?: ""
+            val description = snapshot.child("description").getValue(String::class.java) ?: ""
+            val color = snapshot.child("color").getValue(String::class.java) ?: ""
+            val createdAt = snapshot.child("createdAt").getValue(String::class.java) ?: ""
+            val updatedAt = snapshot.child("updatedAt").getValue(String::class.java)
+
+            val notesSnapshot = snapshot.child("notes")
+            val notes = if (notesSnapshot.exists()) {
+                notesSnapshot.children.mapNotNull { noteSnap ->
+                    noteSnap.getValue(Note::class.java)
+                }
+            } else null
+
+            val space = SpaceRequestResponse(
+                id = id,
+                title = title,
+                description = description,
+                color = color,
+                notes = notes,
+                createdAt = createdAt,
+                updatedAt = updatedAt
+            )
+
+            Resource.Success(space)
+
         } catch (e: Exception) {
-            Resource.Error("Erro ao buscar espaços: ${e.message}")
+            Resource.Error("Erro ao buscar espaço: ${e.message}")
         }
     }
 }

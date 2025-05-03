@@ -206,7 +206,7 @@ fun SpacesScreen(
                 }
                 CustomButton(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "Escolher",
+                    title = "Salvar",
                     variant = ButtonVariant.DEFAULT,
                     disabled = false,
                     onClick = {

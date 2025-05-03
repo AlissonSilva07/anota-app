@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.presentation.components.BottomNavBar
 import edu.alisson.anota.presentation.ui.search.AppSearchBar
@@ -44,7 +45,8 @@ fun MainScaffold(
     navController: NavHostController,
     content: @Composable () -> Unit,
 ) {
-    val currentDestination = navController.currentDestination?.route
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination?.route
     val currentDestinationName =
         currentDestination?.substringAfterLast("/")?.capitalize(Locale.getDefault()).toString()
     val fabRoutes = listOf(
@@ -54,74 +56,73 @@ fun MainScaffold(
     Scaffold(
         topBar = {
             if (currentDestination == Screen.Spaces.route) {
-                TopAppBar(title = {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        Text(
-                            text = "Meus Espaços",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }, modifier = Modifier.fillMaxWidth(), actions = {
-                    IconButton(
-                        onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Outlined.Add,
-                            contentDescription = "Nova Nota",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                })
+                TopAppBar(
+                    title = {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                text = "Meus Espaços",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
             } else if (currentDestination == Screen.SpaceDetails.route) {
                 val spaceDetailsScreenViewModel: SpaceDetailsScreenViewModel = hiltViewModel()
                 val spaceData by spaceDetailsScreenViewModel.spaceData.collectAsState()
-                TopAppBar(title = {
-                    Column(
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        Text(
-                            text = spaceData?.title ?: "Título",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = spaceData?.description ?: "Descrição",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.secondary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                TopAppBar(
+                    title = {
+                        Column(
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                text = spaceData?.title ?: "Título",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = spaceData?.description ?: "Descrição",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.secondary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                navController.popBackStack()
+                            }) {
+                            Icon(
+                                imageVector = Icons.Outlined.ArrowBack,
+                                contentDescription = "Voltar",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {}) {
+                            Icon(
+                                imageVector = Icons.Outlined.MoreVert,
+                                contentDescription = "Ações",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
-                }, modifier = Modifier.fillMaxWidth(), navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navController.popBackStack()
-                        }) {
-                        Icon(
-                            imageVector = Icons.Outlined.ArrowBack,
-                            contentDescription = "Voltar",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }, actions = {
-                    IconButton(
-                        onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Outlined.MoreVert,
-                            contentDescription = "Ações",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                })
+                )
             } else if (currentDestination == Screen.Perfil.route) {
                 TopAppBar(
                     title = {
@@ -130,7 +131,8 @@ fun MainScaffold(
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
-                    })
+                    }
+                )
             } else if (currentDestination == Screen.Pesquisar.route) {
                 AppSearchBar(
                     modifier = Modifier.fillMaxWidth()
@@ -144,7 +146,8 @@ fun MainScaffold(
                     shape = RoundedCornerShape(8.dp),
                     onClick = {
                         navController.navigate(Screen.NoteDetails.route)
-                    }) {
+                    }
+                ) {
                     Row(
                         modifier = Modifier.padding(16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -159,9 +162,11 @@ fun MainScaffold(
                     }
                 }
             } else null
-        }, bottomBar = {
+        },
+        bottomBar = {
             BottomNavBar(navController = navController)
-        }, containerColor = MaterialTheme.colorScheme.surface
+        },
+        containerColor = MaterialTheme.colorScheme.surface
     ) { paddingValues ->
         Column(
             modifier = modifier

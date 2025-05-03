@@ -1,5 +1,6 @@
 package edu.alisson.anota.presentation.ui.space
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +43,8 @@ fun SpaceDetailsScreen(
     val spaceData by spaceDetailsScreenViewModel.spaceData.collectAsState()
     val spaceDataResponse by spaceDetailsScreenViewModel.spaceDataResponse.collectAsState()
 
-    LaunchedEffect(spaceId) {
+    LaunchedEffect(Unit) {
+        Log.d("SpaceDetailsScreen", "LaunchedEffect: $spaceId")
         spaceDetailsScreenViewModel.getSpaceById(spaceId)
     }
 
@@ -55,22 +58,44 @@ fun SpaceDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             when (spaceDataResponse) {
-                is Resource.Error<*> -> {}
-                is Resource.Loading<*> -> {}
+                is Resource.Error<*> -> {
+                    Text(
+                        text = "Não foi possível recuperar as notas deste espaço.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+
+                is Resource.Loading<*> -> {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+
                 is Resource.Success<*> -> {
                     if (spaceData != null) {
+                        val notes = spaceData?.notes.orEmpty()
+                        val lastIndex = notes.lastIndex
+
+                        Text(
+                            text = "Todas as notas: ${notes.size ?: 0}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(1f)
                                 .padding(horizontal = 16.dp),
                         ) {
-                            itemsIndexed(spaceData?.notes as List<Note>) { index, note ->
+                            itemsIndexed(notes) { index, note ->
                                 SpaceNoteItem(
                                     note = note,
                                     onItemClick = {}
                                 )
-                                val lastIndex: Int = spaceData?.notes?.lastIndex!!
                                 if (index < lastIndex) {
                                     HorizontalDivider(
                                         modifier = Modifier.padding(vertical = 4.dp),
@@ -90,19 +115,9 @@ fun SpaceDetailsScreen(
                                 .align(Alignment.CenterHorizontally)
                         )
                     }
-
                 }
             }
-            Text(
-                text = "Todas as notas: ${spaceData?.notes?.size}",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-
         }
-
     }
 }
 
