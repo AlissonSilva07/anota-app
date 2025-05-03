@@ -143,7 +143,6 @@ class NotesScreenViewModel @Inject constructor(
                     _noteData.value = note
                     _noteDataResponse.value = Resource.Success(note)
 
-                    // ✅ Automatically populate input fields
                     if (note != null) {
                         _noteTitle.value = note.title
                         _noteBody.value = note.content
@@ -202,5 +201,23 @@ class NotesScreenViewModel @Inject constructor(
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
         }
     }
+    
+    fun deleteNote(onSuccess: () -> Unit, noteId: String) = viewModelScope.launch {
+        try {
+            val spaceId = _selectedSpace.value?.id ?: ""
+
+            if (spaceId.isBlank() || noteId.isBlank()) {
+                return@launch
+            }
+
+            notesRepository.deleteNoteById(
+                spaceId = spaceId,
+                noteId = noteId
+            )
+            onSuccess()
+        } catch (e: Exception) {
+            Log.e("NotesScreenViewModel", "Exception: ${e.message}")
+        }
+    }        
 
 }

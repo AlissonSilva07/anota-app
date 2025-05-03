@@ -251,7 +251,14 @@ fun NoteScreen(
                             )
                         }
                         IconButton(
-                            onClick = { navigateBack() },
+                            onClick = {
+                                notesScreenViewModel.deleteNote(
+                                    onSuccess = {
+                                        navigateBack()
+                                    },
+                                    noteId = (intent as NoteIntent.Edit).noteId,
+                                )
+                            }
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Delete,

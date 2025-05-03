@@ -117,4 +117,25 @@ class NotesRepositoryImpl @Inject constructor(
             Resource.Error("Erro ao editar a nota: ${e.message}")
         } as Resource<Nothing>
     }
+
+    override suspend fun deleteNoteById(spaceId: String, noteId: String): Resource<Nothing> {
+        return try {
+            val uid = firebaseAuth.currentUser?.uid
+                ?: return Resource.Error("Usuário não autenticado.")
+
+            val noteRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(uid)
+                .child("spaces")
+                .child(spaceId)
+                .child("notes")
+                .child(noteId)
+
+            noteRef.removeValue().await()
+
+            Resource.Success(null)
+        } catch (e: Exception) {
+            Resource.Error("Não foi possível excluir a nota", e)
+        } as Resource<Nothing>
+    }
 }
