@@ -5,7 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "last_seen_note")
 data class LastSeenNoteEntity(
-    @PrimaryKey val id: String,
+    @PrimaryKey val localId: Int = 0,
+    val id: String,
     val title: String,
     val content: String,
     val spaceTitle: String,

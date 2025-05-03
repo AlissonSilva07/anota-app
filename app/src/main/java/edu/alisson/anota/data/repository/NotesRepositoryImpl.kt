@@ -153,6 +153,7 @@ class NotesRepositoryImpl @Inject constructor(
         Log.d("NotesRepository", "Salvando nota localmente: $note")
         lastSeenNoteDao.saveLastSeenNote(
             LastSeenNoteEntity(
+                localId = 0,
                 id = note.id,
                 spaceId = note.spaceID,
                 title = note.title,

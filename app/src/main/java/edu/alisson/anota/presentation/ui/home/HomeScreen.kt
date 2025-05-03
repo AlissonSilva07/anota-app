@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.domain.model.Space
 import edu.alisson.anota.presentation.navigation.Screen
@@ -43,12 +42,14 @@ fun HomeScreen(
     spacesScreenViewModel: SpacesScreenViewModel = hiltViewModel()
 ) {
     val user by homeScreenViewModel.userData.collectAsState()
+    val lastSeenNote by homeScreenViewModel.lastSeenNote.collectAsState()
 
     val spacesData by spacesScreenViewModel.spacesData.collectAsState()
     val spacesDataResponse by spacesScreenViewModel.spacesDataResponse.collectAsState()
 
     LaunchedEffect(Unit) {
         spacesScreenViewModel.getAllSpaces()
+        homeScreenViewModel.getLastSeenNote()
     }
 
     Column(
@@ -71,11 +72,28 @@ fun HomeScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold
             )
-            CardLastNote(
-                onClick = {},
-                title = "Nota 1",
-                description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-            )
+            if (lastSeenNote != null) {
+                CardLastNote(
+                    onClick = {
+                        lastSeenNote?.let {
+                            navController.navigate(
+                                Screen.NoteDetails.createRoute(
+                                    spaceId = it.spaceID,
+                                    noteId = it.id
+                                )
+                            )
+                        }
+                    },
+                    title = lastSeenNote?.title ?: "Sem título",
+                    description = lastSeenNote?.content ?: "Sem conteúdo"
+                )
+            } else {
+                Text(
+                    text = "Abra uma nota dos seus espaços.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
         }
         Column(
             modifier = Modifier

@@ -14,7 +14,7 @@ fun Note.toMap(): Map<String, Any> = mapOf(
 )
 
 fun LastSeenNoteEntity.toNote(): Note = Note(
-    id = id,
+    id = id.toString(),
     title = title,
     content = content,
     spaceID = spaceId,
