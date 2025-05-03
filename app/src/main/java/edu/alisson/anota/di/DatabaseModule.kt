@@ -7,8 +7,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import edu.alisson.anota.data.local.UserDao
-import edu.alisson.anota.data.local.UserDatabase
+import edu.alisson.anota.data.local.last_note.LastSeenNoteDao
+import edu.alisson.anota.data.local.last_note.LastSeenNoteDatabase
+import edu.alisson.anota.data.local.user.UserDao
+import edu.alisson.anota.data.local.user.UserDatabase
 import javax.inject.Singleton
 
 @Module
@@ -17,7 +19,7 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): UserDatabase {
+    fun provideUserDatabase(@ApplicationContext context: Context): UserDatabase {
         return Room.databaseBuilder(
             context,
             UserDatabase::class.java,
@@ -26,7 +28,22 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideChatDao(database: UserDatabase): UserDao {
+    fun provideUserDao(database: UserDatabase): UserDao {
         return database.userDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLastSeenNoteDatabase(@ApplicationContext context: Context): LastSeenNoteDatabase {
+        return Room.databaseBuilder(
+            context,
+            LastSeenNoteDatabase::class.java,
+            "last_seen_note_database"
+        ).build()
+    }
+
+    @Provides
+    fun provideLastSeenNoteDao(database: LastSeenNoteDatabase): LastSeenNoteDao {
+        return database.lastSeenNoteDao()
     }
 }

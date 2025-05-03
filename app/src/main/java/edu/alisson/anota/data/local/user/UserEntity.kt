@@ -1,4 +1,4 @@
-package edu.alisson.anota.data.local
+package edu.alisson.anota.data.local.user
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

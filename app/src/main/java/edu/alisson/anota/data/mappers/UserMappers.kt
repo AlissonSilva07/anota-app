@@ -1,6 +1,6 @@
 package edu.alisson.anota.data.mappers
 
-import edu.alisson.anota.data.local.UserEntity
+import edu.alisson.anota.data.local.user.UserEntity
 import edu.alisson.anota.domain.model.User
 
 fun User.toUserEntity(): UserEntity {

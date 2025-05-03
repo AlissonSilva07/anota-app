@@ -1,7 +1,7 @@
 package edu.alisson.anota.data.repository
 
 import com.google.firebase.database.FirebaseDatabase
-import edu.alisson.anota.data.local.UserDatabase
+import edu.alisson.anota.data.local.user.UserDatabase
 import edu.alisson.anota.data.mappers.toUser
 import edu.alisson.anota.data.mappers.toUserEntity
 import edu.alisson.anota.data.utils.Resource

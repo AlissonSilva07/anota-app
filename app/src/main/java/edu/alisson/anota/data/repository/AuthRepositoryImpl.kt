@@ -4,7 +4,6 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
-import edu.alisson.anota.data.local.UserDatabase
 import edu.alisson.anota.data.utils.DataStoreManager
 import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.domain.repository.AuthRepository

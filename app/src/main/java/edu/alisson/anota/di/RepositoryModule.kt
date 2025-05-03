@@ -6,7 +6,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import edu.alisson.anota.data.local.UserDatabase
+import edu.alisson.anota.data.local.last_note.LastSeenNoteDao
+import edu.alisson.anota.data.local.user.UserDatabase
 import edu.alisson.anota.data.repository.AuthRepositoryImpl
 import edu.alisson.anota.data.repository.NotesRepositoryImpl
 import edu.alisson.anota.data.repository.SpaceRepositoryImpl
@@ -55,7 +56,8 @@ object RepositoryModule {
     fun provideNoteRepository(
         firebaseAuth: FirebaseAuth,
         database: FirebaseDatabase,
+        lastSeenNoteDao: LastSeenNoteDao
     ): NotesRepository {
-        return NotesRepositoryImpl(firebaseAuth, database)
+        return NotesRepositoryImpl(firebaseAuth, database, lastSeenNoteDao)
     }
 }

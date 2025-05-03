@@ -1,4 +1,4 @@
-package edu.alisson.anota.data.local
+package edu.alisson.anota.data.local.user
 
 import androidx.room.Dao
 import androidx.room.Delete

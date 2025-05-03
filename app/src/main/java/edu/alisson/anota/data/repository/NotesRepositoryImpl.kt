@@ -3,15 +3,20 @@ package edu.alisson.anota.data.repository
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import edu.alisson.anota.data.local.last_note.LastSeenNoteDao
+import edu.alisson.anota.data.local.last_note.LastSeenNoteEntity
+import edu.alisson.anota.data.mappers.toNote
 import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.domain.model.Note
 import edu.alisson.anota.domain.repository.NotesRepository
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 
 class NotesRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val database: FirebaseDatabase,
+    private val lastSeenNoteDao: LastSeenNoteDao
 ): NotesRepository {
 
     override suspend fun saveNote(note: Note): Resource<Nothing> {
@@ -138,4 +143,29 @@ class NotesRepositoryImpl @Inject constructor(
             Resource.Error("Não foi possível excluir a nota", e)
         } as Resource<Nothing>
     }
+
+    override suspend fun getLastSeenNote(): Note? {
+        val lastNote = lastSeenNoteDao.getLastSeenNote()
+        return lastNote?.toNote()
+    }
+
+    override suspend fun saveLastSeenNoteLocally(note: Note) {
+        Log.d("NotesRepository", "Salvando nota localmente: $note")
+        lastSeenNoteDao.saveLastSeenNote(
+            LastSeenNoteEntity(
+                id = note.id,
+                spaceId = note.spaceID,
+                title = note.title,
+                content = note.content,
+                spaceTitle = note.spaceTitle,
+                createdAt = note.createdAt,
+            )
+        )
+    }
+
+    override suspend fun deleteLastSeenNoteById() {
+        lastSeenNoteDao.clearLastSeenNote()
+    }
+
+
 }

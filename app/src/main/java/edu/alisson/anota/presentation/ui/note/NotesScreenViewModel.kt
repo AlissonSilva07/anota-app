@@ -147,6 +147,8 @@ class NotesScreenViewModel @Inject constructor(
                         _noteTitle.value = note.title
                         _noteBody.value = note.content
                         _selectedSpace.value = NoteLabelResponse(note.spaceID, note.spaceTitle)
+
+                        saveLastSeenNote(note)
                     }
                 }
 
@@ -218,6 +220,19 @@ class NotesScreenViewModel @Inject constructor(
         } catch (e: Exception) {
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
         }
-    }        
+    }
 
+    private fun saveLastSeenNote(note: Note) {
+        viewModelScope.launch {
+            try {
+                if (note != null) {
+                    notesRepository.saveLastSeenNoteLocally(
+                        note = note
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("NotesScreenViewModel", "Exception: ${e.message}")
+            }
+        }
+    }
 }
