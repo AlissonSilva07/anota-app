@@ -50,8 +50,6 @@ fun MainScaffold(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination?.route
-    val currentDestinationName =
-        currentDestination?.substringAfterLast("/")?.capitalize(Locale.getDefault()).toString()
     val fabRoutes = listOf(
         Screen.Home.route, Screen.SpaceDetails.route
     )
@@ -159,7 +157,7 @@ fun MainScaffold(
                 TopAppBar(
                     title = {
                         Text(
-                            text = currentDestinationName,
+                            text = "Perfil",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -168,6 +166,28 @@ fun MainScaffold(
             } else if (currentDestination == Screen.Pesquisar.route) {
                 AppSearchBar(
                     modifier = Modifier.fillMaxWidth()
+                )
+            } else if (currentDestination == Screen.SpaceCreate.route) {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "Novo Espaço",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                navController.popBackStack()
+                            }) {
+                            Icon(
+                                imageVector = Icons.Outlined.ArrowBack,
+                                contentDescription = "Voltar",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 )
             } else null
         }, floatingActionButton = {

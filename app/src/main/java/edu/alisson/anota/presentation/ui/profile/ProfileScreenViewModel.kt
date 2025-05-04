@@ -21,6 +21,9 @@ class ProfileScreenViewModel @Inject constructor(
     private val dataStoreManager: DataStoreManager
 ) : ViewModel() {
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     private val _userData = MutableStateFlow<User?>(null)
     val userData = _userData.asStateFlow()
 
@@ -75,6 +78,15 @@ class ProfileScreenViewModel @Inject constructor(
     }
 
     fun logout() {
-        authRepository.logout()
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                authRepository.logout()
+                _isLoading.value = false
+            } catch (e: Exception) {
+                _isLoading.value = false
+                Log.e("ProfileScreenViewModel", "Exception: ${e.message}")
+            }
+        }
     }
 }

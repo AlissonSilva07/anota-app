@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -44,6 +46,7 @@ fun SignUpScreen(
 ) {
     val context = LocalContext.current
 
+    val isLoading by signUpScreenViewModel.isLoading.collectAsState()
     val name by signUpScreenViewModel.name.collectAsState()
     val email by signUpScreenViewModel.email.collectAsState()
     val password by signUpScreenViewModel.password.collectAsState()
@@ -129,7 +132,16 @@ fun SignUpScreen(
             CustomButton(
                 title = "Cadastrar",
                 variant = ButtonVariant.DEFAULT,
-                disabled = false,
+                disabled = isLoading,
+                icon = {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                    }
+                },
                 onClick = {
                     signUpScreenViewModel.signUp()
                 },

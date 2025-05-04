@@ -28,51 +28,14 @@ class SpacesScreenViewModel @Inject constructor(
     private val spaceRepository: SpaceRepository,
 ) : ViewModel() {
 
-    private val _title = MutableStateFlow("")
-    val title = _title.asStateFlow()
-
-    private val _description = MutableStateFlow("")
-    val description = _description.asStateFlow()
-
-    private val _selectedColor = MutableStateFlow(Color.Blue)
-    val selectedColor = _selectedColor.asStateFlow()
-
-    // Error states
-    private val _titleError = MutableStateFlow<String?>(null)
-    val titleError = _titleError.asStateFlow()
-
-    private val _descriptionError = MutableStateFlow<String?>(null)
-    val descriptionError = _descriptionError.asStateFlow()
-
     private val _spacesData = MutableStateFlow<List<Space>?>(null)
     val spacesData = _spacesData.asStateFlow()
 
     private val _spacesDataResponse = MutableStateFlow<Resource<List<SpaceRequestResponse>?>>(Resource.Loading())
     val spacesDataResponse = _spacesDataResponse.asStateFlow()
 
-    // UI Events
     private val _eventFlow = MutableSharedFlow<SignUpUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
-
-    fun onTitleChange(value: String) {
-        _title.value = value
-    }
-
-    fun onDescriptionChange(value: String) {
-        _description.value = value
-    }
-
-    fun onSelectedColorChange(value: Color) {
-        _selectedColor.value = value
-    }
-
-    fun clearForm() {
-        _title.value = ""
-        _description.value = ""
-        _selectedColor.value = Color.Blue
-        _titleError.value = null
-        _descriptionError.value = null
-    }
 
     fun getAllSpaces() {
         viewModelScope.launch {
@@ -94,30 +57,6 @@ class SpacesScreenViewModel @Inject constructor(
                 _spacesDataResponse.value = Resource.Error(e.message ?: "Erro ao buscar espaços.")
                 Log.e("HomeScreenViewModel", "Exception: ${e.message}")
             }
-        }
-    }
-
-    fun saveSpace(onSuccess: () -> Unit) {
-        viewModelScope.launch {
-            val title = _title.value
-            val description = _description.value
-            val color = _selectedColor.value
-
-            val currentTimestamp = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).format(Date())
-
-
-            spaceRepository.saveSpace(
-                SpaceRequestResponse(
-                    id = "",
-                    title = title,
-                    description = description,
-                    color = color.toHex(),
-                    notes = null,
-                    createdAt = currentTimestamp,
-                    updatedAt = currentTimestamp,
-                )
-            )
-            onSuccess()
         }
     }
 }

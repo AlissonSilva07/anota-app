@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.StickyNote2
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,6 +43,7 @@ fun LoginScreen(
     loginViewModel: LoginScreenViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val isLoading by loginViewModel.isLoading.collectAsState()
     val email by loginViewModel.email.collectAsState()
     val password by loginViewModel.password.collectAsState()
     val emailError by loginViewModel.emailError.collectAsState()
@@ -106,8 +108,17 @@ fun LoginScreen(
             CustomButton(
                 title = "Entrar",
                 variant = ButtonVariant.DEFAULT,
-                disabled = false,
                 onClick = { loginViewModel.login() },
+                disabled = isLoading,
+                icon = {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
             TextButton(

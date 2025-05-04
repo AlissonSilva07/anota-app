@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -90,6 +91,7 @@ fun NoteScreen(
         mutableStateOf(false)
     }
 
+    val isLoading by notesScreenViewModel.isLoading.collectAsState()
     val spaceLabels by notesScreenViewModel.spaceLabels.collectAsState()
     val spaceLabelsResponse by notesScreenViewModel.spaceLabelsResponse.collectAsState()
     val selectedSpace by notesScreenViewModel.selectedSpace.collectAsState()
@@ -228,6 +230,7 @@ fun NoteScreen(
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         IconButton(
+                            enabled = !isLoading,
                             onClick = {
                                 if (intent is NoteIntent.Create) {
                                     notesScreenViewModel.createNote(
@@ -251,6 +254,7 @@ fun NoteScreen(
                             )
                         }
                         IconButton(
+                            enabled = !isLoading,
                             onClick = {
                                 notesScreenViewModel.deleteNote(
                                     onSuccess = {
@@ -267,13 +271,22 @@ fun NoteScreen(
                             )
                         }
                         IconButton(
+                            enabled = !isLoading,
                             onClick = { navigateBack() },
                         ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Logout,
-                                contentDescription = "Sair",
-                                tint = MaterialTheme.colorScheme.surface
-                            )
+                            if (!isLoading) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Logout,
+                                    contentDescription = "Sair",
+                                    tint = MaterialTheme.colorScheme.surface
+                                )
+                            } else {
+                                CircularProgressIndicator(
+                                    color = MaterialTheme.colorScheme.surface,
+                                    modifier = Modifier.size(24.dp),
+                                    strokeWidth = 2.dp
+                                )
+                            }
                         }
                     }
                 }

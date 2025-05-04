@@ -7,6 +7,7 @@ sealed class Screen(val route: String) {
     data object Pesquisar : Screen("pesquisar")
     data object Perfil : Screen("perfil")
     data object Spaces : Screen("spaces")
+    data object SpaceCreate : Screen("spaces/new-space")
     data object SpaceDetails : Screen("spaces/{spaceId}") {
         fun createRoute(spaceId: String): String = "spaces/$spaceId"
     }

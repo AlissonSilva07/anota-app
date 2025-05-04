@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import edu.alisson.anota.presentation.navigation.MainScaffold
 import edu.alisson.anota.presentation.navigation.Screen
+import edu.alisson.anota.presentation.ui.create_space.CreateSpaceScreen
 import edu.alisson.anota.presentation.ui.home.HomeScreen
 import edu.alisson.anota.presentation.ui.note.NoteScreen
 import edu.alisson.anota.presentation.ui.profile.ProfileScreen
@@ -53,6 +54,16 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
                 navController = navController
             ) {
                 SpacesScreen(
+                    navController = navController
+                )
+            }
+        }
+
+        composable(Screen.SpaceCreate.route) {
+            MainScaffold(
+                navController = navController
+            ) {
+                CreateSpaceScreen(
                     navController = navController
                 )
             }

@@ -56,20 +56,9 @@ fun SpacesScreen(
     navController: NavController,
     spacesScreenViewModel: SpacesScreenViewModel = hiltViewModel()
 ) {
-    val sheetState = rememberModalBottomSheetState()
-    var isOpenModal by remember {
-        mutableStateOf(false)
-    }
 
     val spacesData by spacesScreenViewModel.spacesData.collectAsState()
     val spacesDataResponse by spacesScreenViewModel.spacesDataResponse.collectAsState()
-
-    val title by spacesScreenViewModel.title.collectAsState()
-    val description by spacesScreenViewModel.description.collectAsState()
-    val selectedColor by spacesScreenViewModel.selectedColor.collectAsState()
-
-    val titleError by spacesScreenViewModel.titleError.collectAsState()
-    val descriptionError by spacesScreenViewModel.descriptionError.collectAsState()
 
     LaunchedEffect(Unit) {
         spacesScreenViewModel.getAllSpaces()
@@ -147,7 +136,9 @@ fun SpacesScreen(
                 horizontalArrangement = Arrangement.Center
             ) {
                 TextButton(
-                    onClick = { isOpenModal = true },
+                    onClick = {
+                        navController.navigate(Screen.SpaceCreate.route)
+                    },
                 ) {
                     Text(
                         text = "Criar Novo Espaço",
@@ -157,75 +148,6 @@ fun SpacesScreen(
                         textDecoration = TextDecoration.Underline
                     )
                 }
-            }
-        }
-    }
-
-    if (isOpenModal) {
-        ModalBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = { isOpenModal = false },
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.primary,
-            scrimColor = Color.Black.copy(alpha = 0.5f),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = "Novo Espaço",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Insira os detalhes para criar um novo espaço:",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontWeight = FontWeight.Normal
-                )
-                CustomInput(
-                    label = "Título",
-                    value = title,
-                    onValueChange = { newValue ->
-                        spacesScreenViewModel.onTitleChange(newValue)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    error = titleError
-                )
-                CustomInput(
-                    label = "Descrição",
-                    value = description,
-                    onValueChange = { newValue ->
-                        spacesScreenViewModel.onDescriptionChange(newValue)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    error = descriptionError
-                )
-                CustomColorPicker(
-                    initialColor = selectedColor
-                ) { selectedColor ->
-                    spacesScreenViewModel.onSelectedColorChange(selectedColor)
-                }
-                CustomButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = "Salvar",
-                    variant = ButtonVariant.DEFAULT,
-                    disabled = false,
-                    onClick = {
-                        spacesScreenViewModel.saveSpace(
-                            onSuccess = {
-                                spacesScreenViewModel.getAllSpaces()
-                                spacesScreenViewModel.clearForm()
-                                isOpenModal = false
-                            }
-                        )
-                    }
-                )
-                Spacer(Modifier.height(16.dp))
             }
         }
     }

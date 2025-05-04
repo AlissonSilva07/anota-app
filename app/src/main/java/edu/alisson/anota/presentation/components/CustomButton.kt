@@ -55,16 +55,17 @@ fun CustomButton(
         contentPadding = PaddingValues(16.dp),
         modifier = modifier
     ) {
+        if (icon != null) {
+            icon()
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+
         Text(
             text = title,
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        if (icon != null) {
-            icon()
-        }
     }
 }
 

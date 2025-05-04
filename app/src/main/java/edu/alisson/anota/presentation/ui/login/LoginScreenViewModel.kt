@@ -18,6 +18,9 @@ class LoginScreenViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     private val _email = MutableStateFlow("")
     val email = _email.asStateFlow()
 
@@ -45,6 +48,7 @@ class LoginScreenViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     fun login() = viewModelScope.launch {
+        _isLoading.value = true
         val email = _email.value.trim()
         val password = _password.value
 
@@ -54,24 +58,31 @@ class LoginScreenViewModel @Inject constructor(
         var hasError = false
 
         if (email.isBlank()) {
+            _isLoading.value = false
             _emailError.value = "E-mail não pode estar vazio."
             hasError = true
         }
 
         if (password.length < 6) {
+            _isLoading.value = false
             _passwordError.value = "Senha deve ter pelo menos 6 caracteres."
             hasError = true
         }
 
-        if (hasError) return@launch
+        if (hasError) {
+            _isLoading.value = false
+            return@launch
+        }
 
         _authState.value = Resource.Loading()
         val result = authRepository.login(email, password)
         _authState.value = result
 
         if (result is Resource.Error) {
+            _isLoading.value = false
             _eventFlow.emit(LoginUiEvent.ShowToast(result.message ?: "Erro ao fazer login."))
         } else if (result is Resource.Success) {
+            _isLoading.value = false
             _eventFlow.emit(LoginUiEvent.NavigateToHome)
         }
     }

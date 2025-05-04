@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -49,6 +50,7 @@ fun ProfileScreen(
     profileScreenViewModel: ProfileScreenViewModel = hiltViewModel()
 ) {
 
+    val isLoading by profileScreenViewModel.isLoading.collectAsState()
     val userData by profileScreenViewModel.userData.collectAsState()
 
     Column(
@@ -92,11 +94,20 @@ fun ProfileScreen(
         CustomButton(
             title = "Sair",
             variant = ButtonVariant.DEFAULT,
-            disabled = false,
+            disabled = isLoading,
+            icon = {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.surface,
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp
+                    )
+                }
+            },
             onClick = {
                 profileScreenViewModel.logout()
                 navController.navigate("auth") {
-                    popUpTo(0) { inclusive = true } // clears the whole backstack
+                    popUpTo(0) { inclusive = true }
                     launchSingleTop = true
                 }
             },

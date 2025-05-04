@@ -26,6 +26,9 @@ class NotesScreenViewModel @Inject constructor(
     private val spaceRepository: SpaceRepository
 ) : ViewModel() {
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     private val _spaceLabels = MutableStateFlow<List<NoteLabelResponse>?>(null)
     val spaceLabels = _spaceLabels.asStateFlow()
 
@@ -98,15 +101,19 @@ class NotesScreenViewModel @Inject constructor(
     }
 
     fun createNote(onSuccess: () -> Unit) = viewModelScope.launch {
+        _isLoading.value = true
         if (_selectedSpace.value == null) {
+            _isLoading.value = false
             _eventFlow.emit(LoginUiEvent.ShowToast("Escolha um espaço para salvar a nota."))
         }
 
         if (noteTitle.value.isBlank()) {
+            _isLoading.value = false
             _noteTitleError.value = "Escolha um nome para sua nota"
         }
 
         if (noteBody.value.isBlank()) {
+            _isLoading.value = false
             _noteBodyError.value = "Escolha um corpo para sua nota"
         }
 
@@ -127,8 +134,10 @@ class NotesScreenViewModel @Inject constructor(
                     updatedAt = currentTimestamp
                 )
             )
+            _isLoading.value = false
             onSuccess()
         } catch (e: Exception) {
+            _isLoading.value = false
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
         }
     }
@@ -167,15 +176,19 @@ class NotesScreenViewModel @Inject constructor(
     }
 
     fun editNote(onSuccess: () -> Unit) = viewModelScope.launch {
+        _isLoading.value = true
         if (_selectedSpace.value == null) {
+            _isLoading.value = false
             _eventFlow.emit(LoginUiEvent.ShowToast("Escolha um espaço para salvar a nota."))
         }
 
         if (noteTitle.value.isBlank()) {
+            _isLoading.value = false
             _noteTitleError.value = "Escolha um nome para sua nota"
         }
 
         if (noteBody.value.isBlank()) {
+            _isLoading.value = false
             _noteBodyError.value = "Escolha um corpo para sua nota"
         }
 
@@ -198,13 +211,16 @@ class NotesScreenViewModel @Inject constructor(
                     updatedAt = currentTimestamp
                 )
             )
+            _isLoading.value = false
             onSuccess()
         } catch (e: Exception) {
+            _isLoading.value = false
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
         }
     }
     
     fun deleteNote(onSuccess: () -> Unit, noteId: String) = viewModelScope.launch {
+        _isLoading.value = true
         try {
             val spaceId = _selectedSpace.value?.id ?: ""
 
@@ -216,8 +232,10 @@ class NotesScreenViewModel @Inject constructor(
                 spaceId = spaceId,
                 noteId = noteId
             )
+            _isLoading.value = false
             onSuccess()
         } catch (e: Exception) {
+            _isLoading.value = false
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
         }
     }
