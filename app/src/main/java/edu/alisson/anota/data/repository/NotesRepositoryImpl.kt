@@ -170,6 +170,34 @@ class NotesRepositoryImpl @Inject constructor(
         } as Resource<Nothing>
     }
 
+    override suspend fun searchNotes(query: String): Resource<List<Note>> {
+        return try {
+            val uid = firebaseAuth.currentUser?.uid
+                ?: return Resource.Error("Usuário não autenticado.")
+
+            val noteHistoryRef = database.reference
+                .child("users")
+                .child(uid)
+                .child("noteHistory")
+
+            val snapshot = noteHistoryRef.get().await()
+            if (!snapshot.exists()) {
+                return Resource.Success(emptyList())
+            }
+
+            val notes = snapshot.children.mapNotNull { it.getValue(Note::class.java) }
+
+            val filteredNotes = notes.filter { note ->
+                note.title.contains(query, ignoreCase = true) ||
+                        note.content.contains(query, ignoreCase = true)
+            }
+
+            Resource.Success(filteredNotes)
+        } catch (e: Exception) {
+            Resource.Error("Erro ao buscar notas: ${e.message}")
+        }
+    }
+
     override suspend fun getLastSeenNote(): Note? {
         val lastNote = lastSeenNoteDao.getLastSeenNote()
         return lastNote?.toNote()
@@ -193,6 +221,4 @@ class NotesRepositoryImpl @Inject constructor(
     override suspend fun deleteLastSeenNoteById() {
         lastSeenNoteDao.clearLastSeenNote()
     }
-
-
 }

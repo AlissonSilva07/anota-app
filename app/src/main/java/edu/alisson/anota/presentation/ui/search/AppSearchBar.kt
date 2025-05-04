@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,11 +25,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.alisson.anota.presentation.ui.search.components.CardSearchItem
 
@@ -36,11 +39,12 @@ import edu.alisson.anota.presentation.ui.search.components.CardSearchItem
 @Composable
 fun AppSearchBar(
     modifier: Modifier = Modifier,
-    searchViewModel: SearchViewModel = viewModel(),
+    searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     var expanded by rememberSaveable { mutableStateOf(true) }
     val searchResults by searchViewModel.searchResults.collectAsState()
     val searchQuery by searchViewModel.searchQuery.collectAsState()
+    val isSearching by searchViewModel.isSearching.collectAsState()
 
     Box(
         modifier = modifier
@@ -63,10 +67,8 @@ fun AppSearchBar(
                         )
                     },
                     query = searchQuery,
-                    onQueryChange = { searchViewModel.onSearch(it) },
-                    onSearch = {
-                        searchViewModel.onSearch(searchQuery)
-                    },
+                    onQueryChange = { searchViewModel.updateSearchQuery(it.trimStart()) },
+                    onSearch = { searchViewModel.updateSearchQuery(searchQuery.trim()) },
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
                     placeholder = { Text("Toque para pesquisar") }
@@ -79,35 +81,53 @@ fun AppSearchBar(
                 dividerColor = MaterialTheme.colorScheme.outline,
             )
         ) {
-            if (searchQuery.isNotEmpty() && searchResults.isNotEmpty()) {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    item { Spacer(modifier = Modifier.height(8.dp)) }
-                    items(searchResults) { note ->
-                        CardSearchItem(
-                            note = note,
-                            onClick = {}
+            when {
+                isSearching -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.padding(16.dp)
                         )
                     }
-                    item { Spacer(modifier = Modifier.height(8.dp)) }
                 }
-            } else if (searchQuery.isNotEmpty() && searchResults.isEmpty()) {
-                Text(
-                    text = "Nenhum resultado encontrado.",
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            } else {
-                Text(
-                    text = "Faça uma pesquisa para começar.",
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
+
+                searchQuery.isNotEmpty() && searchResults.isNotEmpty() -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        item { Spacer(modifier = Modifier.height(8.dp)) }
+                        items(searchResults) { note ->
+                            CardSearchItem(
+                                note = note,
+                                onClick = {
+                                    expanded = false
+                                }
+                            )
+                        }
+                        item { Spacer(modifier = Modifier.height(8.dp)) }
+                    }
+                }
+
+                searchQuery.isNotEmpty() && searchResults.isEmpty() -> {
+                    Text(
+                        text = "Nenhum resultado encontrado.",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+
+                else -> {
+                    Text(
+                        text = "Faça uma pesquisa para começar.",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
             }
         }
     }

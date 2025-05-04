@@ -9,6 +9,7 @@ interface NotesRepository {
     suspend fun getNoteById(spaceId: String, noteId: String): Resource<Note>
     suspend fun editNoteById(spaceId: String, noteId: String, updatedNote: Note): Resource<Nothing>
     suspend fun deleteNoteById(spaceId: String, noteId: String): Resource<Nothing>
+    suspend fun searchNotes(query: String): Resource<List<Note>>
     suspend fun getLastSeenNote(): Note?
     suspend fun saveLastSeenNoteLocally(note: Note)
     suspend fun deleteLastSeenNoteById()
