@@ -51,7 +51,13 @@ class NotesRepositoryImpl @Inject constructor(
                 "updatedAt" to note.updatedAt
             )
 
-            newNoteRef.setValue(noteMap).await()
+            // Multi-path update: save to both /spaces/{spaceId}/notes/{noteId} and /noteHistory/{noteId}
+            val updates = hashMapOf<String, Any>(
+                "/users/$uid/spaces/${note.spaceID}/notes/$noteId" to noteMap,
+                "/users/$uid/noteHistory/$noteId" to noteMap
+            )
+
+            database.reference.updateChildren(updates).await()
 
             Resource.Success(null)
 
@@ -134,6 +140,26 @@ class NotesRepositoryImpl @Inject constructor(
                 .child("spaces")
                 .child(spaceId)
                 .child("notes")
+                .child(noteId)
+
+            noteRef.removeValue().await()
+            deleteNoteFromHistory(noteId)
+
+            Resource.Success(null)
+        } catch (e: Exception) {
+            Resource.Error("Não foi possível excluir a nota", e)
+        } as Resource<Nothing>
+    }
+
+    private suspend fun deleteNoteFromHistory(noteId: String): Resource<Nothing> {
+        return try {
+            val uid = firebaseAuth.currentUser?.uid
+                ?: return Resource.Error("Usuário não autenticado.")
+
+            val noteRef = FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(uid)
+                .child("noteHistory")
                 .child(noteId)
 
             noteRef.removeValue().await()

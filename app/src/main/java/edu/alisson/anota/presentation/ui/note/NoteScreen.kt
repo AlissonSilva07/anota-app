@@ -253,22 +253,25 @@ fun NoteScreen(
                                 tint = MaterialTheme.colorScheme.surface
                             )
                         }
-                        IconButton(
-                            enabled = !isLoading,
-                            onClick = {
-                                notesScreenViewModel.deleteNote(
-                                    onSuccess = {
-                                        navigateBack()
-                                    },
-                                    noteId = (intent as NoteIntent.Edit).noteId,
+                        if (intent is NoteIntent.Edit) {
+                            IconButton(
+                                enabled = !isLoading,
+                                onClick = {
+                                    notesScreenViewModel.deleteNote(
+                                        onSuccess = {
+                                            navigateBack()
+                                        },
+                                        spaceId = (intent as NoteIntent.Edit).spaceId,
+                                        noteId = (intent as NoteIntent.Edit).noteId,
+                                    )
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Delete,
+                                    contentDescription = "Deletar e sair",
+                                    tint = MaterialTheme.colorScheme.surface
                                 )
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Delete,
-                                contentDescription = "Deletar e sair",
-                                tint = MaterialTheme.colorScheme.surface
-                            )
                         }
                         IconButton(
                             enabled = !isLoading,

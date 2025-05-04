@@ -102,19 +102,27 @@ class NotesScreenViewModel @Inject constructor(
 
     fun createNote(onSuccess: () -> Unit) = viewModelScope.launch {
         _isLoading.value = true
+
+        var hasError = false
+
         if (_selectedSpace.value == null) {
-            _isLoading.value = false
             _eventFlow.emit(LoginUiEvent.ShowToast("Escolha um espaço para salvar a nota."))
+            hasError = true
         }
 
         if (noteTitle.value.isBlank()) {
-            _isLoading.value = false
             _noteTitleError.value = "Escolha um nome para sua nota"
+            hasError = true
         }
 
         if (noteBody.value.isBlank()) {
-            _isLoading.value = false
             _noteBodyError.value = "Escolha um corpo para sua nota"
+            hasError = true
+        }
+
+        if (hasError) {
+            _isLoading.value = false
+            return@launch
         }
 
         try {
@@ -134,6 +142,7 @@ class NotesScreenViewModel @Inject constructor(
                     updatedAt = currentTimestamp
                 )
             )
+
             _isLoading.value = false
             onSuccess()
         } catch (e: Exception) {
@@ -141,6 +150,7 @@ class NotesScreenViewModel @Inject constructor(
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
         }
     }
+
 
     fun getNoteById(spaceId: String, noteId: String) = viewModelScope.launch {
         try {
@@ -177,19 +187,27 @@ class NotesScreenViewModel @Inject constructor(
 
     fun editNote(onSuccess: () -> Unit) = viewModelScope.launch {
         _isLoading.value = true
+
+        var hasError = false
+
         if (_selectedSpace.value == null) {
-            _isLoading.value = false
             _eventFlow.emit(LoginUiEvent.ShowToast("Escolha um espaço para salvar a nota."))
+            hasError = true
         }
 
         if (noteTitle.value.isBlank()) {
-            _isLoading.value = false
             _noteTitleError.value = "Escolha um nome para sua nota"
+            hasError = true
         }
 
         if (noteBody.value.isBlank()) {
-            _isLoading.value = false
             _noteBodyError.value = "Escolha um corpo para sua nota"
+            hasError = true
+        }
+
+        if (hasError) {
+            _isLoading.value = false
+            return@launch
         }
 
         try {
@@ -207,10 +225,11 @@ class NotesScreenViewModel @Inject constructor(
                     content = body,
                     spaceID = spaceId,
                     spaceTitle = _selectedSpace.value?.label ?: "",
-                    createdAt = currentTimestamp,
+                    createdAt = _noteData.value?.createdAt ?: currentTimestamp,
                     updatedAt = currentTimestamp
                 )
             )
+
             _isLoading.value = false
             onSuccess()
         } catch (e: Exception) {
@@ -218,16 +237,20 @@ class NotesScreenViewModel @Inject constructor(
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
         }
     }
-    
-    fun deleteNote(onSuccess: () -> Unit, noteId: String) = viewModelScope.launch {
+
+
+    fun deleteNote(onSuccess: () -> Unit, spaceId: String, noteId: String) = viewModelScope.launch {
         _isLoading.value = true
+
+        val validNoteId = noteId.isNotBlank()
+
+        if (spaceId.isBlank() || !validNoteId) {
+            _isLoading.value = false
+            _eventFlow.emit(LoginUiEvent.ShowToast("Não foi possível excluir a nota. Dados inválidos."))
+            return@launch
+        }
+
         try {
-            val spaceId = _selectedSpace.value?.id ?: ""
-
-            if (spaceId.isBlank() || noteId.isBlank()) {
-                return@launch
-            }
-
             notesRepository.deleteNoteById(
                 spaceId = spaceId,
                 noteId = noteId
@@ -237,8 +260,10 @@ class NotesScreenViewModel @Inject constructor(
         } catch (e: Exception) {
             _isLoading.value = false
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
+            _eventFlow.emit(LoginUiEvent.ShowToast("Erro ao excluir nota."))
         }
     }
+
 
     private fun saveLastSeenNote(note: Note) {
         viewModelScope.launch {

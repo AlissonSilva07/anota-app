@@ -75,9 +75,9 @@ fun SpaceDetailsScreen(
                         val lastIndex = notes.lastIndex
 
                         Text(
-                            text = "Todas as notas: ${notes.size ?: 0}",
+                            text = if (notes.isNotEmpty()) "Todas as notas: ${notes.size}" else "Nada ainda por aqui. Adicione a sua primeira nota!",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
 
