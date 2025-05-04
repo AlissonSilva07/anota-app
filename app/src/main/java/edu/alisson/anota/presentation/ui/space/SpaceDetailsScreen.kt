@@ -2,6 +2,7 @@ package edu.alisson.anota.presentation.ui.space
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,6 +48,7 @@ fun SpaceDetailsScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .padding(16.dp)
             .background(MaterialTheme.colorScheme.surface)
     ) {
         Column(
@@ -58,15 +60,21 @@ fun SpaceDetailsScreen(
                     Text(
                         text = "Não foi possível recuperar as notas deste espaço.",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
 
                 is Resource.Loading<*> -> {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.primary,
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.padding(16.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
 
                 is Resource.Success<*> -> {
@@ -77,15 +85,13 @@ fun SpaceDetailsScreen(
                         Text(
                             text = if (notes.isNotEmpty()) "Todas as notas: ${notes.size}" else "Nada ainda por aqui. Adicione a sua primeira nota!",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.padding(horizontal = 16.dp)
+                            color = MaterialTheme.colorScheme.secondary
                         )
 
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(1f)
-                                .padding(horizontal = 16.dp),
                         ) {
                             itemsIndexed(notes) { index, note ->
                                 SpaceNoteItem(
@@ -112,7 +118,6 @@ fun SpaceDetailsScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier
-                                .padding(vertical = 32.dp)
                                 .align(Alignment.CenterHorizontally)
                         )
                     }
