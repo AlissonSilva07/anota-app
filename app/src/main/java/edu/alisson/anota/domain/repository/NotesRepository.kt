@@ -12,5 +12,5 @@ interface NotesRepository {
     suspend fun searchNotes(query: String): Resource<List<Note>>
     suspend fun getLastSeenNote(): Note?
     suspend fun saveLastSeenNoteLocally(note: Note)
-    suspend fun deleteLastSeenNoteById()
+    suspend fun deleteLastSeenNote()
 }

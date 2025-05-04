@@ -144,6 +144,7 @@ class NotesRepositoryImpl @Inject constructor(
 
             noteRef.removeValue().await()
             deleteNoteFromHistory(noteId)
+            deleteLastSeenNote()
 
             Resource.Success(null)
         } catch (e: Exception) {
@@ -218,7 +219,7 @@ class NotesRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun deleteLastSeenNoteById() {
+    override suspend fun deleteLastSeenNote() {
         lastSeenNoteDao.clearLastSeenNote()
     }
 }
