@@ -33,12 +33,15 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import edu.alisson.anota.presentation.navigation.Screen
 import edu.alisson.anota.presentation.ui.search.components.CardSearchItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppSearchBar(
     modifier: Modifier = Modifier,
+    navController: NavController,
     searchViewModel: SearchViewModel = hiltViewModel()
 ) {
     var expanded by rememberSaveable { mutableStateOf(true) }
@@ -105,7 +108,12 @@ fun AppSearchBar(
                             CardSearchItem(
                                 note = note,
                                 onClick = {
-                                    expanded = false
+                                    navController.navigate(
+                                        Screen.NoteDetails.createRoute(
+                                            spaceId = note.spaceID,
+                                            noteId = note.id
+                                        )
+                                    )
                                 }
                             )
                         }

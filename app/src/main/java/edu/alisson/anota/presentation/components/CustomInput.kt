@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -71,12 +72,15 @@ fun CustomInput(
             visualTransformation = if (type == TextFieldType.PASSWORD && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
             trailingIcon = {
                 if (type == TextFieldType.PASSWORD) {
-                    Icon(
-                        imageVector = Icons.Outlined.RemoveRedEye,
-                        contentDescription = "Toggle Password Visibility",
-                        modifier = Modifier.clickable { passwordVisible = !passwordVisible },
-                        tint = if (passwordVisible) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
-                    )
+                    IconButton(
+                        onClick = { passwordVisible = !passwordVisible }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.RemoveRedEye,
+                            contentDescription = "Toggle Password Visibility",
+                            tint = if (passwordVisible) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                        )
+                    }
                 }
             },
             textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.primary),

@@ -177,7 +177,9 @@ fun MainScaffold(
                         DropdownMenu(
                             expanded = menuExpanded,
                             onDismissRequest = { menuExpanded = false },
-                            offset = androidx.compose.ui.unit.DpOffset(x = (-24).dp, y = 0.dp)
+                            offset = androidx.compose.ui.unit.DpOffset(x = (-24).dp, y = 0.dp),
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(8.dp)
                         ) {
                             DropdownMenuItem(
                                 text = {
@@ -285,7 +287,8 @@ fun MainScaffold(
                 )
             } else if (currentDestination == Screen.Pesquisar.route) {
                 AppSearchBar(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    navController = navController
                 )
             } else if (currentDestination == Screen.SpaceCreate.route) {
                 TopAppBar(

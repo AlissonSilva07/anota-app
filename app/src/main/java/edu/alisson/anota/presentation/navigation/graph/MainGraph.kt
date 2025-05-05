@@ -35,7 +35,9 @@ fun NavGraphBuilder.mainGraph(navController: NavHostController) {
             MainScaffold(
                 navController = navController
             ) {
-                AppSearchBar()
+                AppSearchBar(
+                    navController = navController
+                )
             }
         }
 
