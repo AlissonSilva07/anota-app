@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +29,9 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,7 +41,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -88,6 +96,10 @@ fun NoteScreen(
 
     val sheetState = rememberModalBottomSheetState()
     var isOpenModal by remember {
+        mutableStateOf(false)
+    }
+
+    var isDeleteDialogOpen by remember {
         mutableStateOf(false)
     }
 
@@ -257,13 +269,7 @@ fun NoteScreen(
                             IconButton(
                                 enabled = !isLoading,
                                 onClick = {
-                                    notesScreenViewModel.deleteNote(
-                                        onSuccess = {
-                                            navigateBack()
-                                        },
-                                        spaceId = (intent as NoteIntent.Edit).spaceId,
-                                        noteId = (intent as NoteIntent.Edit).noteId,
-                                    )
+                                    isDeleteDialogOpen = true
                                 }
                             ) {
                                 Icon(
@@ -388,6 +394,84 @@ fun NoteScreen(
                     }
                 }
                 Spacer(Modifier.height(8.dp))
+            }
+        }
+    }
+
+    if (isDeleteDialogOpen) {
+        BasicAlertDialog(
+            onDismissRequest = { isDeleteDialogOpen = false },
+        ) {
+            Surface(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
+                shape = RoundedCornerShape(8.dp),
+                tonalElevation = AlertDialogDefaults.TonalElevation,
+                contentColor = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.surface,
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Warning,
+                        contentDescription = "Icon",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Atenção",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Deseja realmente excluir a nota?",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Normal,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        TextButton(
+                            onClick = {
+                                notesScreenViewModel.deleteNote(
+                                    onSuccess = {
+                                        isDeleteDialogOpen = false
+                                        navigateBack()
+                                    },
+                                    spaceId = (intent as NoteIntent.Edit).spaceId,
+                                    noteId = (intent as NoteIntent.Edit).noteId,
+                                )
+                            },
+                        ) {
+                            Text(
+                                text = "Confirmar",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        TextButton(
+                            onClick = { isDeleteDialogOpen = false },
+                        ) {
+                            Text(
+                                text = "Cancelar",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
             }
         }
     }

@@ -3,14 +3,22 @@ package edu.alisson.anota.presentation.navigation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,7 +31,9 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,6 +53,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import edu.alisson.anota.data.Constants.spaces
 import edu.alisson.anota.presentation.components.BottomNavBar
+import edu.alisson.anota.presentation.ui.note.NoteIntent
 import edu.alisson.anota.presentation.ui.search.AppSearchBar
 import edu.alisson.anota.presentation.ui.space.SpaceDetailsScreenViewModel
 import edu.alisson.anota.presentation.utils.ObserveAsEvents
@@ -111,6 +123,9 @@ fun MainScaffold(
             } else if (currentDestination == Screen.SpaceDetails.route) {
                 val spaceDetailsScreenViewModel: SpaceDetailsScreenViewModel = hiltViewModel()
                 val spaceData by spaceDetailsScreenViewModel.spaceData.collectAsState()
+                var isDeleteDialogOpen by remember {
+                    mutableStateOf(false)
+                }
                 TopAppBar(
                     title = {
                         Column(
@@ -173,15 +188,88 @@ fun MainScaffold(
                                     )
                                 },
                                 onClick = {
-                                    spaceDetailsScreenViewModel.deleteSpace(
-                                        onSuccess = {
-                                            navController.popBackStack()
-                                            menuExpanded = false
-                                        },
-                                        spaceId = spaceData?.id ?: ""
-                                    )
+                                    menuExpanded = false
+                                    isDeleteDialogOpen = true
                                 }
                             )
+                        }
+
+                        if (isDeleteDialogOpen) {
+                            BasicAlertDialog(
+                                onDismissRequest = { isDeleteDialogOpen = false },
+                            ) {
+                                Surface(
+                                    modifier = Modifier
+                                        .wrapContentWidth()
+                                        .wrapContentHeight(),
+                                    shape = RoundedCornerShape(8.dp),
+                                    tonalElevation = AlertDialogDefaults.TonalElevation,
+                                    contentColor = MaterialTheme.colorScheme.primary,
+                                    color = MaterialTheme.colorScheme.surface,
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(16.dp),
+                                        verticalArrangement = Arrangement.Top,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Warning,
+                                            contentDescription = "Icon",
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(32.dp)
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text(
+                                            text = "Atenção",
+                                            style = MaterialTheme.typography.titleLarge,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text(
+                                            text = "Deseja realmente excluir o espaço?",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            fontWeight = FontWeight.Normal,
+                                            textAlign = TextAlign.Center
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Row(
+                                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                                        ) {
+                                            TextButton(
+                                                onClick = {
+                                                    spaceDetailsScreenViewModel.deleteSpace(
+                                                        onSuccess = {
+                                                            menuExpanded = false
+                                                            isDeleteDialogOpen = false
+                                                            navController.popBackStack()
+                                                        },
+                                                        spaceId = spaceData?.id ?: ""
+                                                    )
+                                                },
+                                            ) {
+                                                Text(
+                                                    text = "Confirmar",
+                                                    style = MaterialTheme.typography.bodyLarge,
+                                                    color = MaterialTheme.colorScheme.primary,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            }
+                                            TextButton(
+                                                onClick = { isDeleteDialogOpen = false },
+                                            ) {
+                                                Text(
+                                                    text = "Cancelar",
+                                                    style = MaterialTheme.typography.bodyLarge,
+                                                    color = MaterialTheme.colorScheme.secondary,
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 )
