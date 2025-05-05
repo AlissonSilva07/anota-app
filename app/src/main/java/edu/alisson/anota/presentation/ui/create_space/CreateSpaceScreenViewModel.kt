@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.alisson.anota.data.dto.SpaceRequestResponse
 import edu.alisson.anota.domain.repository.SpaceRepository
+import edu.alisson.anota.presentation.utils.SnackbarController
+import edu.alisson.anota.presentation.utils.SnackbarEvent
 import edu.alisson.anota.presentation.utils.toHex
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -81,6 +83,17 @@ class CreateSpaceScreenViewModel @Inject constructor(
             )
             _isLoading.value = false
             onSuccess()
+            showSnackBar("Espaço criado com sucesso.")
+        }
+    }
+
+    fun showSnackBar(message: String) {
+        viewModelScope.launch {
+            SnackbarController.sendEvent(
+                event = SnackbarEvent(
+                    message = message
+                )
+            )
         }
     }
 }

@@ -9,6 +9,8 @@ import edu.alisson.anota.data.mappers.toSpace
 import edu.alisson.anota.data.utils.Resource
 import edu.alisson.anota.domain.model.Space
 import edu.alisson.anota.domain.repository.SpaceRepository
+import edu.alisson.anota.presentation.utils.SnackbarController
+import edu.alisson.anota.presentation.utils.SnackbarEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -59,9 +61,20 @@ class SpaceDetailsScreenViewModel @Inject constructor(
                     spaceId = spaceId
                 )
                 onSuccess()
+                showSnackBar("Espaço excluído com sucesso.")
             } catch (e: Exception) {
                 Log.e("NotesScreenViewModel", "Exception: ${e.message}")
             }
+        }
+    }
+
+    fun showSnackBar(message: String) {
+        viewModelScope.launch {
+            SnackbarController.sendEvent(
+                event = SnackbarEvent(
+                    message = message
+                )
+            )
         }
     }
 }

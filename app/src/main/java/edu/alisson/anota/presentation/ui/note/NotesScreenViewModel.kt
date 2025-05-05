@@ -10,6 +10,8 @@ import edu.alisson.anota.domain.model.Note
 import edu.alisson.anota.domain.repository.NotesRepository
 import edu.alisson.anota.domain.repository.SpaceRepository
 import edu.alisson.anota.presentation.ui.login.LoginUiEvent
+import edu.alisson.anota.presentation.utils.SnackbarController
+import edu.alisson.anota.presentation.utils.SnackbarEvent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -145,6 +147,7 @@ class NotesScreenViewModel @Inject constructor(
 
             _isLoading.value = false
             onSuccess()
+            showSnackBar("Nota salva com sucesso.")
         } catch (e: Exception) {
             _isLoading.value = false
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
@@ -232,6 +235,7 @@ class NotesScreenViewModel @Inject constructor(
 
             _isLoading.value = false
             onSuccess()
+            showSnackBar("Alterações salvas com sucesso.")
         } catch (e: Exception) {
             _isLoading.value = false
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
@@ -257,6 +261,7 @@ class NotesScreenViewModel @Inject constructor(
             )
             _isLoading.value = false
             onSuccess()
+            showSnackBar("Nota excluída com sucesso.")
         } catch (e: Exception) {
             _isLoading.value = false
             Log.e("NotesScreenViewModel", "Exception: ${e.message}")
@@ -276,6 +281,16 @@ class NotesScreenViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("NotesScreenViewModel", "Exception: ${e.message}")
             }
+        }
+    }
+
+    fun showSnackBar(message: String) {
+        viewModelScope.launch {
+            SnackbarController.sendEvent(
+                event = SnackbarEvent(
+                    message = message
+                )
+            )
         }
     }
 }
